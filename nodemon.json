@@ -1,0 +1,3 @@
+{
+    "exec": "npm babel-node index.js"
+}
