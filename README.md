@@ -1,7 +1,7 @@
 <h1 align="center">BookJam Backend
 <div align="center">
 <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/>
-<img  src="https://img.shields.io/badge/Express-000000?style=원하는스타일&logo=express&logoColor=white"/>
+<img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white"/>
 
 
 
