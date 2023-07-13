@@ -11,6 +11,26 @@ const recordsDao = {
             console.log(error);
             return {error: true};
         }
+    },
+
+    insertRecord: async (connection, recordData, images_url) => {
+        const sql_record = `INSERT INTO records (author,  place_id, isbn, date, activities, emotions, contents, isNotPublic, comment_not_allowed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql_record_image = `INSERT INTO record_images (record_id, image_url) VALUES (?, ?)`;
+        try {
+            await connection.beginTransaction();
+            const [record_results] = await connection.query(sql_record, recordData);
+            console.log(images_url);
+            for (let url of images_url) {
+                await connection.query(sql_record_image, [record_results.insertId, url]);
+            }
+            await connection.commit();
+            return record_results;
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
+            return {error: true};
+        }
+        
     }
 }
 
