@@ -1,6 +1,10 @@
 const activityDao = {
     selectActivityByActivityId: async (connection, activityId) => {
-        const sql = `SELECT* FROM activities WHERE activity_id = ? ORDER BY created_at DESC;`
+        const sql = `
+            SELECT *, (SELECT COUNT(*) FROM activity_likes WHERE activities.activity_id = activity_likes.activity_id) AS like_num 
+            FROM activities
+            WHERE activities.activity_id = ?;
+            `
         try {
             const [records] = await connection.query(sql, activityId);
             return records;
