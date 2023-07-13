@@ -37,6 +37,8 @@ const placesDao = {
       from place_reviews r
       join place_review_images i on r.review_id = i.review_id
       where r.place_id = ${placeId}
+      order by created_at desc
+      limit 5
     `;
 
     const [queryResult] = await connection.query(sql);
