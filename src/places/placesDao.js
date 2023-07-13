@@ -45,6 +45,49 @@ const placesDao = {
 
     return queryResult;
   },
+  selectPlaceById: async (placeId, connection) => {
+    const sql = `
+      select place_id, name
+      from places
+      where place_id = ${placeId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  selectPlaceReviews: async (placeId, last, connection) => {
+    let sql = `
+      select review_id "reviewId", visited_at "visitedAt", contents, rating, user_id "userId", username, profile_image "profileImage"
+      from place_reviews r
+      join users u on r.author = u.user_id
+      where r.place_id = ${placeId} and r.status = 0  
+    `;
+    if (last) {
+      sql += `and r.created_at < 
+        (select created_at
+        from place_reviews
+        where review_id = ${last})`;
+    }
+    sql += `
+      limit 5
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  selectReviewImages: async (reviewId, connection) => {
+    const sql = `
+      select image_url
+      from place_review_images
+      where review_id = ${reviewId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
 };
 
 export default placesDao;

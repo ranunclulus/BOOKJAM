@@ -47,6 +47,38 @@ const placesService = {
 
     return searchResult;
   },
+  findReviews: async (placeId, last) => {
+    const connection = await pool.getConnection();
+
+    const placeExists = await placesDao.selectPlaceById(placeId, connection);
+
+    if (!placeExists) {
+      return { error: true };
+    }
+
+    let reviews = await placesDao.selectPlaceReviews(placeId, last, connection);
+    reviews = await Promise.all(
+      reviews.map(async (review) => {
+        const images = (await placesDao.selectReviewImages(review.reviewId, connection)).map((obj) => obj.image_url);
+        const { userId, username, profileImage, ...rest } = review;
+
+        return {
+          ...rest,
+          images,
+          author: {
+            userId,
+            username,
+            profileImage,
+          },
+        };
+      })
+    );
+
+    return {
+      error: false,
+      result: reviews,
+    };
+  },
 };
 
 export default placesService;
