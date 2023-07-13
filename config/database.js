@@ -2,11 +2,11 @@ require("dotenv").config();
 import mysql from "mysql2/promise";
 
 const pool = mysql.createPool({
-  host: `bookjam-backend-database.cktuh5mlbmvv.ap-northeast-2.rds.amazonaws.com`,
-  user: `admin`,
+  host: `${process.env.DB_HOST}`,
+  user:`${process.env.DB_USER}`,
   port: `3306`,
-  password: `bookjam1`,
-  database: `bookjam`,
+  password: `${process.env.DB_PASS}`,
+  database: `${process.env.DB_NAME}`
 });
 
 export default pool;

@@ -1,7 +1,8 @@
 const activityDao = {
     selectActivityByActivityId: async (connection, activityId) => {
         const sql = `
-            SELECT *, (SELECT COUNT(*) FROM activity_likes WHERE activities.activity_id = activity_likes.activity_id) AS like_num 
+            SELECT activity_id, created_at, title, info, capacity, headcount, total_rating, review_count, image_url, 
+            (SELECT COUNT(*) FROM activity_likes WHERE activities.activity_id = activity_likes.activity_id) AS like_num 
             FROM activities
             WHERE activities.activity_id = ?;
             `
