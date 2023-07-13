@@ -8,6 +8,7 @@ const baseResponse = {
   LOCATION_EMPTY: { status: "FAIL", code: 2003, message: "위치 정보가 없습니다." },
   RECORDS_USERID_READ_FAIL: { status: "FAIL", code: 2004, message: "기록 - 유저 아이디 읽기 실패" },
   PLACE_NOT_FOUND: { status: "FAIL", code: 2005, message: "장소가 존재하지 않습니다." },
+  REVIEW_NOT_FOUND: { status: "FAIL", code: 2006, message: "리뷰가 존재하지 않습니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
