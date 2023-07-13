@@ -7,6 +7,7 @@ const activityDao = {
             WHERE activities.activity_id = ?
             `;
         const [queryActivity] = await connection.query(sql, activityId);
+        console.log(typeof(queryActivity));
         return queryActivity;
         /*
         try {

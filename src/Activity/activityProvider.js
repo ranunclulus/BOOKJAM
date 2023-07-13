@@ -7,7 +7,7 @@ const activityProvider = {
             const connection = await pool.getConnection(async conn => conn);
             const activityResult = await recordsDao.selectActivityByActivityId(connection, activityId);
 
-            if(!activityResult) {
+            if(Object.keys(activityResult).length === 0) {
                 return {error: true};
             }
             connection.release();
