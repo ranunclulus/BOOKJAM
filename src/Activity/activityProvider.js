@@ -6,12 +6,17 @@ const activityProvider = {
         try{
             const connection = await pool.getConnection(async conn => conn);
             const activityResult = await recordsDao.selectActivityByActivityId(connection, activityId);
+
+            if(!activityResult) {
+                return {error: true};
+            }
             connection.release();
-            if (activityResult.error)
-                return {error: true}
-            return activityResult;
-        }catch(err) {
-            return {error: true}
+            return {
+                error: false,
+                result: activityResult
+            };
+        } catch(err) {
+            return {error: true};
         }
     }
 }

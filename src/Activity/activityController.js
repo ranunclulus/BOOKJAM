@@ -15,15 +15,15 @@ const activityController = {
 
             const activity = await activityProvider.retrieveActivityByActivityId(activityId);
 
-            if (!activityId) {
+            if(activity.error) {
                 return res.status(400).json(response(baseResponse.ACTIVITY_ACTIVITYID_EMPTY));
             }
-            if (activity.error)
-                return res.status(400).json(response(baseResponse.SERVER_ERROR));
+
+
             return res.status(200).json(response(baseResponse.SUCCESS, activity));
         } catch (error){
             console.log(error);
-            return res.status(400).json(response(baseResponse.SERVER_ERROR));
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
 
 
         }
