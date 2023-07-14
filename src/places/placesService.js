@@ -50,7 +50,7 @@ const placesService = {
   findReviews: async (placeId, last) => {
     const connection = await pool.getConnection();
 
-    const placeExists = await placesDao.selectPlaceById(placeId, connection);
+    const [placeExists] = await placesDao.selectPlaceById(placeId, connection);
 
     if (!placeExists) {
       return { error: true };
