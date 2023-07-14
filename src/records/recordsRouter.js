@@ -13,10 +13,11 @@ const storage = multer.diskStorage({
     }
 });
  
-//storage생성 후
 const upload = multer({ storage: storage }).array('photos');
 
+recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
 recordsRouter.get('/:userId(\\d+)', recordsController.getRecordsByUserId);
 recordsRouter.post('/:userId(\\d+)', upload, recordsController.postRecords);
+
 
 export default recordsRouter;

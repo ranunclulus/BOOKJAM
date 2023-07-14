@@ -8,6 +8,8 @@ const baseResponse = {
   LOCATION_EMPTY: { status: "FAIL", code: 2003, message: "위치 정보가 없습니다." },
   RECORDS_USERID_READ_FAIL: { status: "FAIL", code: 2004, message: "기록 - 유저 아이디 읽기 실패" },
   PLACE_NOT_FOUND: { status: "FAIL", code: 2005, message: "장소가 존재하지 않습니다." },
+  NOT_FRIEND: { status: "FAIL", code: 2006, message: "친구가 아닌 유저입니다."},
+  USER_NOT_FOUND: { status: "FAIL", code: 2007, message: "존재하지 않는 유저입니다."},
   ACTIVITY_ACTIVITYID_EMPTY: { status: "FAIL", code: 2100, message: "존재하지 않는 activityId" },
 
   //ERROR
