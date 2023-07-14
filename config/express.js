@@ -7,6 +7,7 @@ import placesRouter from "../src/places/placesRouter";
 import reviewsRouter from "../src/reviews/reviewsRouter";
 import activityRoute from "../src/Activity/activityRoute";
 import authRouter from "../src/auth/authRouter";
+import userRouter from "../src/user/userRouter";
 
 const app = express();
 
@@ -21,5 +22,7 @@ app.use("/records", recordsRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/auth", authRouter);
 app.use(activityRoute);
+app.use(activityRoute)
+app.use("/user", userRouter);
 
 export default app;
