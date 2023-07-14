@@ -5,20 +5,22 @@ const activityDao = {
             (SELECT COUNT(*) FROM activity_likes WHERE activities.activity_id = activity_likes.activity_id) AS like_num 
             FROM activities
             WHERE activities.activity_id = ?
+            ORDER BY created_ar DESC;
             `;
         const [queryActivity] = await connection.query(sql, activityId);
-        console.log(typeof(queryActivity));
         return queryActivity;
-        /*
-        try {
-            const [queryActivity] = await connection.query(sql, activityId);
-            return queryActivity;
-        } catch (error) {
-            console.log(error);
-            return {error: true};
-        }
+    },
 
-         */
+    selectActivitiesByPlaceId: async (connection, placeId) => {
+        const sql = `
+        SELECT * 
+        FROM activities
+        WHERE place_id = ?;
+        `
+        
+        const [queryActivities] = await connection.query(sql, placeId);
+        
+        return queryActivities;
     }
 }
 
