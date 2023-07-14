@@ -6,7 +6,6 @@ const recordsDao = {
         ON cr.place_id = places.place_id`;
         const order = `ORDER BY cr.created_at DESC`;
         try {
-            console.log(isMine);
             const [records] = await connection.query(sql + (isMine ? ' ' : ' WHERE cr.isNotPublic = 0 ') + order);
             return records;
         } catch (error) {
@@ -46,6 +45,28 @@ const recordsDao = {
         try {
             const [records] = await connection.query(sql);
             return records;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    checkFollow: async (connection, userId, friendId) => {
+        const sql = `SELECT count(*) as c FROM follow WHERE followee = ${friendId} and follower = ${userId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    checkUser: async (connection, userId) => {
+        const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
         } catch (error) {
             console.log(error);
             return {error: true};

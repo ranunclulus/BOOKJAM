@@ -36,6 +36,34 @@ const recordsService = {
             return {error: true}
         }
     },
+
+    checkFollow: async (userId, friendId) => {
+        try {
+            const connection = await pool.getConnection(async conn => conn);
+            const chk = await recordsDao.checkFollow(connection, userId, friendId);
+            connection.release();
+            if (chk.error)
+                return {error: true};
+            return chk;
+        } catch (error) {
+            console.error(error);
+            return {error: true};
+        }
+    },
+
+    checkUser: async (userId) => {
+        try {
+            const connection = await pool.getConnection(async conn => conn);
+            const chk = await recordsDao.checkUser(connection, userId);
+            connection.release();
+            if (chk.error)
+                return {error: true};
+            return chk;
+        } catch (error) {
+            console.error(error);
+            return {error: true};
+        }
+    },
 }
 
 export default recordsService;
