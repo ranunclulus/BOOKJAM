@@ -10,12 +10,12 @@ const recordsController = {
             if (!userId) {
                 return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
             }
-            const records = await recordsService.getRecordsByUserId(userId);
+            const records = await recordsService.getRecordsByUserId(userId, 1);
             if (records.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, records));
         } catch (error){
-            console.log(error);
+            console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
     },
@@ -30,7 +30,7 @@ const recordsController = {
             const photos = req.files;
             const images_url = [];
             for(let i = 0; i < photos.length; i++){
-                images_url.push(photos[i].path);
+                images_url.push(photos[i].path);    
             }
             place = Number(place);
             emotions = Number(emotions);
@@ -43,11 +43,36 @@ const recordsController = {
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS));
         } catch (error){
-            console.log(error);
+            console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
-    }
+    },
 
+    getFriendsRecords: async (req, res) => {
+        try {
+            const userId = Number(req.params.userId);
+            if (!userId) {
+                return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
+            }
+            const friendId = req.query.friendId;
+            console.log(friendId);
+            if (friendId){
+                const records = await recordsService.getRecordsByUserId(friendId, 0)
+                if (records.error)
+                    return res.status(500).json(response(baseResponse.SERVER_ERROR))
+                return res.status(200).json(response(baseResponse.SUCCESS, records));
+            }
+            else{
+                const records = await recordsService.getRecordsAll(userId)
+                if (records.error)
+                    return res.status(500).json(response(baseResponse.SERVER_ERROR))
+                return res.status(200).json(response(baseResponse.SUCCESS, records));
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        }
+    },
 }
 
 export default recordsController;
