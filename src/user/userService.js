@@ -30,11 +30,6 @@ const userService = {
         } catch (error) {
             console.error(error);
             return 0;
-                return {error: true};
-            return chk;
-        } catch (error) {
-            console.error(error);
-            return {error: true};
         }
     },
 }
