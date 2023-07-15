@@ -4,22 +4,6 @@ import recordsService from "./recordsService";
 import recordsProvider from "./recordsProvider";
 
 const recordsController = {
-    getRecordsByUserId: async (req, res) => {
-        try {
-            const userId = Number(req.params.userId);
-            if (!userId) {
-                return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
-            }
-            const records = await recordsService.getRecordsByUserId(userId);
-            if (records.error)
-                return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, records));
-        } catch (error){
-            console.error(error);
-            return res.status(500).json(response(baseResponse.SERVER_ERROR));
-        }
-    },
-
     postRecords: async (req, res) => {
         try{
             let {userId, place, isbn, date, emotions, activity, contents, isNotPublic, comment_not_allowed} = req.body;
@@ -55,6 +39,10 @@ const recordsController = {
             if (!userId) {
                 return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
             }
+            const chkUser = await recordsService.checkUser(userId);
+            if (!chkUser) {
+                return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
+            }
             const friendId = req.query.friendId;
             if (friendId){
                 const chkUser = await recordsService.checkUser(friendId);
@@ -67,7 +55,7 @@ const recordsController = {
                         return res.status(400).json(response(baseResponse.NOT_FRIEND))
                     }
                     else{
-                        const records = await recordsService.getRecordsByUserId(friendId)
+                        const records = await recordsService.getRecordsByUserId(userId, friendId)
                         if (records.error)
                             return res.status(500).json(response(baseResponse.SERVER_ERROR))
                         return res.status(200).json(response(baseResponse.SUCCESS, records));
