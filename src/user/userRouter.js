@@ -1,8 +1,8 @@
 import express from 'express';
-import recordsController from './recordsController';
+import userController from './userController';
 import multer from 'multer';
 
-const recordsRouter = express.Router();
+const userRouter = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -15,8 +15,7 @@ const storage = multer.diskStorage({
  
 const upload = multer({ storage: storage }).array('photos');
 
-recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
-recordsRouter.post('/', upload, recordsController.postRecords);
+userRouter.get('/:userId(\\d+)/records', userController.getRecordsByUserId);
 
 
-export default recordsRouter;
+export default userRouter;
