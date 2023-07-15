@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).array('photos');
 
 recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
-recordsRouter.get('/:userId(\\d+)', recordsController.getRecordsByUserId);
 recordsRouter.post('/', upload, recordsController.postRecords);
 
 
