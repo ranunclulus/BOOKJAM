@@ -22,7 +22,6 @@ app.use("/records", recordsRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/auth", authRouter);
 app.use(activityRoute);
-app.use(activityRoute)
 app.use("/user", userRouter);
 
 export default app;
