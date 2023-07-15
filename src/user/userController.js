@@ -107,6 +107,7 @@ const userController = {
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
     }, 
+
 }
 
 export default userController;

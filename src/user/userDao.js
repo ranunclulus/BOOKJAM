@@ -69,6 +69,7 @@ const userDao = {
             return {error: true};
         }
     },
+
 }
 
 export default userDao;
