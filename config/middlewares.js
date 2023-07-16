@@ -1,18 +1,18 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
-import aws from "aws-sdk";
+import { S3Client } from "@aws-sdk/client-s3";
 
-const storage = new aws.S3({
+const s3 = new S3Client({
   credentials: {
-    accessKeyId: privateInfo.AWS_ID,
-    secretAccessKey: privateInfo.AWS_SECRET,
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   },
+  region: "ap-northeast-2",
 });
 
 const multerS3Uploader = multerS3({
   s3,
   bucket: "bookjam-bucket",
-  key: (req, file, cb) => cb(null, file.originalname),
   acl: "public-read",
   contentType: multerS3.AUTO_CONTENT_TYPE,
   key: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`),
@@ -27,3 +27,5 @@ const middlewares = {
     storage: multerS3Uploader,
   }),
 };
+
+export default middlewares;
