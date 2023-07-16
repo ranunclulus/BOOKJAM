@@ -30,7 +30,7 @@ const userDao = {
         try {
              const [result] = await connection.query(sql);
              console.log(result);
-             return [result]
+             return {changed: true}
         } catch (error) {
             console.log(error);
             return {error: true};
@@ -41,7 +41,7 @@ const userDao = {
         const sql = `UPDATE users SET password = '${password}' WHERE user_id = ${userId}`;
         try {
              const [result] = await connection.query(sql);
-             return [result]
+             return {changed: true}
         } catch (error) {
             console.log(error);
             return {error: true};
@@ -52,7 +52,7 @@ const userDao = {
         const sql = `UPDATE users SET profile_image = '${profileImg}' WHERE user_id = ${userId}`;
         try {
              const [result] = await connection.query(sql);
-             return [result]
+             return {changed: true}
         } catch (error) {
             console.log(error);
             return {error: true};
@@ -63,7 +63,7 @@ const userDao = {
         const sql = `UPDATE users SET disabled_at = NOW(6) WHERE user_id = ${userId}`;
         try {
              const [result] = await connection.query(sql);
-             return [result]
+             return {changed: true}
         } catch (error) {
             console.log(error);
             return {error: true};

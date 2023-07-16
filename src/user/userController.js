@@ -39,7 +39,7 @@ const userController = {
             const result = await userProvider.putUsername(userId, username);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, "닉네임 변경 성공"));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -60,7 +60,7 @@ const userController = {
             const result = await userProvider.putPassword(userId, password);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, "비밀번호 변경 성공"));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -81,7 +81,7 @@ const userController = {
             const result = await userProvider.putProfile(userId, profileImg);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, "프로필 사진 변경 성공"));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -101,7 +101,7 @@ const userController = {
             const result = await userProvider.putDisabled(userId);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, "회원 탈퇴 성공"));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
