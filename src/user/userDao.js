@@ -63,7 +63,7 @@ const userDao = {
         const sql = `UPDATE users SET disabled_at = NOW(6) WHERE user_id = ${userId}`;
         try {
              const [result] = await connection.query(sql);
-             return {changed: true}
+             return {disabled: true}
         } catch (error) {
             console.log(error);
             return {error: true};
