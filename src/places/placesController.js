@@ -49,6 +49,11 @@ const placesController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+  postReview: async (req, res) => {
+    console.log(req.body);
+
+    return res.send("good");
+  },
 };
 
 export default placesController;
