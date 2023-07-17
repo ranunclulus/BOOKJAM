@@ -88,15 +88,6 @@ const placesService = {
 
     const [placeExists] = await placesDao.selectPlaceById(review.placeId, connection);
     if (!placeExists) {
-      const command = new DeleteObjectsCommand({
-        Bucket: "bookjam-bucket",
-        Delete: {
-          Objects: review.images.map(({ key }) => ({
-            Key: key,
-          })),
-        },
-      });
-      await s3.send(command);
       return { error: true };
     }
 

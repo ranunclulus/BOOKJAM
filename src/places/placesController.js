@@ -52,18 +52,13 @@ const placesController = {
   postReview: async (req, res) => {
     try {
       const { author = 2 } = req; // TODO: jwt 기능 구현되면 수정 할 것
-      const images = req.files?.map(({ location, key }) => ({
-        location,
-        key,
-      }));
+
       const {
         params: { placeId },
-        body: { review: reviewStr },
+        body: { visitedAt, contents, rating },
       } = req;
 
-      const parsedReview = JSON.parse(reviewStr);
-
-      const review = { ...parsedReview, author, images, placeId };
+      const review = { author, placeId, visitedAt, contents, rating };
 
       const result = await placesService.addReview(review);
 
