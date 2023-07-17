@@ -11,6 +11,8 @@ const baseResponse = {
   NOT_FRIEND: { status: "FAIL", code: 2006, message: "친구가 아닌 유저입니다." },
   USER_NOT_FOUND: { status: "FAIL", code: 2007, message: "존재하지 않는 유저입니다." },
   REVIEW_NOT_FOUND: { status: "FAIL", code: 2008, message: "리뷰가 존재하지 않습니다." },
+  RECORD_NOT_FOUND: { status: "FAIL", code: 2009, message: "기록이 존재하지 않습니다." },
+  COMMENT_NOT_FOUND: { status: "FAIL", code: 2010, message: "댓글이 존재하지 않습니다." },
   ACTIVITY_ACTIVITYID_EMPTY: { status: "FAIL", code: 2100, message: "존재하지 않는 activityId" },
   NOT_EMAIL_EXP: { status: "FAIL", code: "2009", message: "이메일 형식이 아닙니다." },
 

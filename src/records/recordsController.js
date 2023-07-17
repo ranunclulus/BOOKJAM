@@ -3,6 +3,7 @@ import { response } from "../../config/response";
 import recordsService from "./recordsService";
 import recordsProvider from "./recordsProvider";
 
+
 const recordsController = {
     postRecords: async (req, res) => {
         try{
@@ -73,6 +74,28 @@ const recordsController = {
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
     },
+
+    getComments: async (req, res) => {
+        try {
+            const recordId = req.params.recordId;
+
+
+            const comments = await recordsProvider.retrieveCommentsByRecordId(recordId);
+            console.log(comments);
+            if(comments.error) {
+                if(comments.cause == 'record') {
+                    return res.status(400).json(response(baseResponse.RECORD_NOT_FOUND));
+                }
+                else {
+                    return res.status(400).json(response(baseResponse.COMMENT_NOT_FOUND));
+                }
+            }
+            return res.status(200).json(response(baseResponse.SUCCESS, comments));
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        }
+    }
 }
 
 export default recordsController;

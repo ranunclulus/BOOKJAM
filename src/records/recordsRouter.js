@@ -17,6 +17,7 @@ const upload = multer({ storage: storage }).array('photos');
 
 recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
 recordsRouter.post('/', upload, recordsController.postRecords);
+recordsRouter.get("/:recordId(\\d+)/comment", recordsController.getComments);
 
 
 export default recordsRouter;

@@ -66,6 +66,16 @@ const recordsDao = {
             return {error: true};
         }
     },
+    checkRecord: async (connection, recordId) => {
+        const sql = `SELECT count(*) as c FROM records WHERE record_id = ${recordId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
 
     checkUser: async (connection, userId) => {
         const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId} AND disabled_at IS NULL`;
@@ -77,6 +87,14 @@ const recordsDao = {
             return {error: true};
         }
     },
+    selectCommentsByRecordId: async (connection, recordId) => {
+        const sql = `
+        select * from comments where record_id = ?;
+        `;
+
+        const [queryComments] = await connection.query(sql, recordId, recordId);
+        return queryComments;
+    }
 }
 
 export default recordsDao;
