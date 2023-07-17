@@ -1,14 +1,6 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { S3Client } from "@aws-sdk/client-s3";
-
-const s3 = new S3Client({
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  },
-  region: "ap-northeast-2",
-});
+import s3 from "./s3";
 
 const multerS3Uploader = multerS3({
   s3,
