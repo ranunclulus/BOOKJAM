@@ -1,20 +1,30 @@
 const placesDao = {
-  selectPlaces: async (keyword, sortBy, coord, connection) => {
+  selectPlacesByKeyword: async (keyword, sortBy, coord, connection) => {
     let sql = `
       select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
-      where name like '%${keyword}%'
+      where name like '%${keyword}%' or a.road like '%${keyword}%' or a.jibun like '%${keyword}%'
       order by 
     `;
 
+    let sortColumn;
     if (sortBy === "rating") {
-      sql += `total_rating desc`;
+      sortColumn = "total_rating";
     } else if (sortBy === "review") {
-      sql += `review_count desc`;
+      sortColumn = "review_count";
     } else if (sortBy === "distance") {
-      sql += `st_distance_sphere(st_geomfromtext('point(${coord.lat} ${coord.lon})'), st_geomfromtext('point(l.lat l.lon)'))`;
+      sortColumn = `st_distance_sphere(point(${coord.lon}, ${coord.lat}), point(lon, lat))`;
     }
+
+    const operator = sortBy === "distance" ? ">=" : "<=";
+    const order = sortBy === "distance" ? "asc" : "desc";
+
+    if (last) {
+      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where category = ${category} and place_id = ${last})`;
+    }
+    sql += ` order by ${sortColumn} ${order}`;
+    sql += " limit 10";
 
     const [queryResult] = await connection.query(sql);
 
@@ -83,6 +93,36 @@ const placesDao = {
       from place_review_images
       where review_id = ${reviewId}
     `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  selectPlacesByCategory: async (category, sortBy, coord, last, connection) => {
+    let sql = `
+      select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
+      from places p
+      join place_address a on p.place_id = a.place_id
+      where p.category = ${category}
+    `;
+
+    let sortColumn;
+    if (sortBy === "rating") {
+      sortColumn = "total_rating";
+    } else if (sortBy === "review") {
+      sortColumn = "review_count";
+    } else if (sortBy === "distance") {
+      sortColumn = `st_distance_sphere(point(${coord.lon}, ${coord.lat}), point(lon, lat))`;
+    }
+
+    const operator = sortBy === "distance" ? ">=" : "<=";
+    const order = sortBy === "distance" ? "asc" : "desc";
+
+    if (last) {
+      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where category = ${category} and place_id = ${last})`;
+    }
+    sql += ` order by ${sortColumn} ${order}`;
+    sql += " limit 10";
 
     const [queryResult] = await connection.query(sql);
 
