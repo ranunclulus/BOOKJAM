@@ -13,6 +13,7 @@ const baseResponse = {
   REVIEW_NOT_FOUND: { status: "FAIL", code: 2008, message: "리뷰가 존재하지 않습니다." },
   ACTIVITY_ACTIVITYID_EMPTY: { status: "FAIL", code: 2100, message: "존재하지 않는 activityId" },
   NOT_EMAIL_EXP: { status: "FAIL", code: "2009", message: "이메일 형식이 아닙니다." },
+  CATEGORY_UNAVAILABLE: { status: "FAIL", code: 2010, message: "올바른 카테고리가 아닙니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },

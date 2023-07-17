@@ -26,7 +26,7 @@ const recordsController = {
             const records = await recordsProvider.postRecord(recordData, images_url);
             if (records.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS));
+            return res.status(200).json(response(baseResponse.SUCCESS, records));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));

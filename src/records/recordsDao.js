@@ -68,7 +68,7 @@ const recordsDao = {
     },
 
     checkUser: async (connection, userId) => {
-        const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId} AND disabled_at IS NOT NULL`;
+        const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId} AND disabled_at IS NULL`;
         try {
             const [[records]] = await connection.query(sql);
             return records.c;
