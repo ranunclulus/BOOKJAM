@@ -98,6 +98,29 @@ const placesDao = {
 
     return queryResult;
   },
+  insertReview: async (review, connection) => {
+    try {
+      const { author, placeId, visitedAt, contents, rating } = review;
+
+      const insertReviewSql = `
+      insert into place_reviews(author, visited_at, place_id, contents, rating) 
+      values (${author}, "${visitedAt}", ${placeId}, '${contents}', ${rating})
+      `;
+
+      await connection.beginTransaction();
+
+      const [queryResult] = await connection.query(insertReviewSql);
+
+      const { insertId: reviewId } = queryResult;
+
+      await connection.commit();
+
+      return reviewId;
+    } catch (error) {
+      await connection.rollback();
+      console.log(error);
+    }
+  },
   selectPlacesByCategory: async (category, sortBy, coord, last, connection) => {
     let sql = `
       select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
