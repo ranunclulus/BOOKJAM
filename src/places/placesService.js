@@ -1,4 +1,6 @@
+import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import pool from "../../config/database";
+import s3 from "../../config/s3";
 import placesDao from "./placesDao";
 
 const placesService = {
@@ -74,10 +76,34 @@ const placesService = {
       })
     );
 
+    connection.release();
+
     return {
       error: false,
       result: reviews,
     };
+  },
+  addReview: async (review) => {
+    const connection = await pool.getConnection();
+
+    const [placeExists] = await placesDao.selectPlaceById(review.placeId, connection);
+    if (!placeExists) {
+      const command = new DeleteObjectsCommand({
+        Bucket: "bookjam-bucket",
+        Delete: {
+          Objects: review.images.map(({ key }) => ({
+            Key: key,
+          })),
+        },
+      });
+      await s3.send(command);
+      return { error: true };
+    }
+
+    const reviewId = await placesDao.insertReview(review, connection);
+    connection.release();
+
+    return { error: false, reviewId };
   },
 };
 

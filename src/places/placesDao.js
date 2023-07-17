@@ -88,6 +88,38 @@ const placesDao = {
 
     return queryResult;
   },
+  insertReview: async (review, connection) => {
+    try {
+      const { author, images, placeId, visitedAt, contents, rating } = review;
+
+      const insertReviewSql = `
+      insert into place_reviews(author, visited_at, place_id, contents, rating) 
+      values (${author}, '${visitedAt}', ${placeId}, '${contents}', ${rating})
+      `;
+
+      await connection.beginTransaction();
+
+      const [queryResult] = await connection.query(insertReviewSql);
+
+      const { insertId: reviewId } = queryResult;
+
+      const imageValues = images.map(({ location }) => [reviewId, location]);
+
+      const insertImagesSql = `
+        insert into place_review_images(review_id, image_url)
+        values ?
+      `;
+
+      await connection.query(insertImagesSql, [imageValues]);
+
+      await connection.commit();
+
+      return reviewId;
+    } catch (error) {
+      await connection.rollback();
+      console.log(error);
+    }
+  },
 };
 
 export default placesDao;

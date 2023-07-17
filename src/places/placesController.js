@@ -50,9 +50,32 @@ const placesController = {
     }
   },
   postReview: async (req, res) => {
-    console.log(req.body);
+    try {
+      const { author = 2 } = req; // TODO: jwt 기능 구현되면 수정 할 것
+      const images = req.files?.map(({ location, key }) => ({
+        location,
+        key,
+      }));
+      const {
+        params: { placeId },
+        body: { review: reviewStr },
+      } = req;
 
-    return res.send("good");
+      const parsedReview = JSON.parse(reviewStr);
+
+      const review = { ...parsedReview, author, images, placeId };
+
+      const result = await placesService.addReview(review);
+
+      if (result.error) {
+        return res.status(400).json(response(baseResponse.PLACE_NOT_FOUND));
+      }
+
+      return res.status(201).json(response(baseResponse.SUCCESS, { reviewId: result.reviewId }));
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
   },
 };
 
