@@ -6,7 +6,6 @@ import recordsRouter from "../src/records/recordsRouter";
 import placesRouter from "../src/places/placesRouter";
 import reviewsRouter from "../src/reviews/reviewsRouter";
 import activityRoute from "../src/Activity/activityRoute";
-import userRouter from "../src/user/userRouter";
 import authRouter from "../src/auth/authRouter";
 import userRouter from "../src/user/userRouter";
 
