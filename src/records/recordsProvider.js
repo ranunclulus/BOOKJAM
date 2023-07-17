@@ -7,7 +7,7 @@ const recordsProvider = {
             const connection = await pool.getConnection();
             const record = await recordsDao.insertRecord(connection, recordData, images_url);
             connection.release();
-            return record;
+            return {recorded: true};
         } catch (error) {
             return {error: true}
         }

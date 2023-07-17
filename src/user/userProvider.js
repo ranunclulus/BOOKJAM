@@ -10,7 +10,7 @@ const userProvider = {
             connection.release()
             if (result.error)
                 return {error: true}
-            return result;
+            return {changed: true};
         } catch (error) {
             console.error(error);
             return {error: true}
@@ -25,7 +25,7 @@ const userProvider = {
             connection.release()
             if (result.error)
                 return {error: true}
-            return result;
+            return {changed: true};
         } catch (error) {
             console.error(error);
             return {error: true}
@@ -39,8 +39,8 @@ const userProvider = {
             const result = await userDao.updateProfile(connection, userId, profileImg);
             connection.release()
             if (result.error)
-                return {error: true}
-            return result;
+                return {error: true};
+            return {changed: true};
         } catch (error) {
             console.error(error);
             return {error: true}
@@ -55,20 +55,9 @@ const userProvider = {
             connection.release()  
             if (result.error)
                 return {error: true} 
-            return result;
+            return {disabled: true};
         } catch (error) {
             console.error(error);
-            return {error: true}
-        }
-    },
-    
-    postRecord: async (recordData, images_url) => {
-        try {
-            const connection = await pool.getConnection();
-            const record = await userDao.insertRecord(connection, recordData, images_url);
-            connection.release();
-            return record;
-        } catch (error) {
             return {error: true}
         }
     },
