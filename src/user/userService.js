@@ -25,11 +25,11 @@ const userService = {
             const chk = await userDao.checkUser(connection, userId);
             connection.release();
             if (chk.error)
-                return {error: true};
+                return 0;
             return chk;
         } catch (error) {
             console.error(error);
-            return {error: true};
+            return 0;
         }
     },
 }

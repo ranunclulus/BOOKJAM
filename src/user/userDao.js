@@ -15,7 +15,7 @@ const userDao = {
     },
 
     checkUser: async (connection, userId) => {
-        const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId}`;
+        const sql = `SELECT count(*) as c FROM users WHERE user_id = ${userId} AND disabled_at IS NULL`;
         try {
             const [[records]] = await connection.query(sql);
             return records.c;
@@ -24,6 +24,52 @@ const userDao = {
             return {error: true};
         }
     },
+
+    updateUsername: async (connection, userId, username) => {
+        const sql = `UPDATE users SET username = '${username}' WHERE user_id = ${userId}`;
+        try {
+            const [result] = await connection.query(sql);
+            console.log(result);
+             return result;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    updatePassword: async (connection, userId, password) => {
+        const sql = `UPDATE users SET password = '${password}' WHERE user_id = ${userId}`;
+        try {
+            const [result] = await connection.query(sql);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    updateProfile: async (connection, userId, profileImg) => {
+        const sql = `UPDATE users SET profile_image = '${profileImg}' WHERE user_id = ${userId}`;
+        try {
+            const [result] = await connection.query(sql);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    updateDisabled: async (connection, userId) => {
+        const sql = `UPDATE users SET disabled_at = NOW(6) WHERE user_id = ${userId}`;
+        try {
+            const [result] = await connection.query(sql);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
 }
 
 export default userDao;

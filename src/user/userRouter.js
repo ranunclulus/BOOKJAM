@@ -16,6 +16,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).array('photos');
 
 userRouter.get('/:userId(\\d+)/records', userController.getRecordsByUserId);
+userRouter.put('/:userId(\\d+)/username', userController.putUsername);
+userRouter.put('/:userId(\\d+)/password', userController.putPassword);
+userRouter.put('/:userId(\\d+)/profile', upload, userController.putProfile);
+userRouter.put('/:userId(\\d+)/disabled', userController.putDisabled);
+
 
 
 export default userRouter;
