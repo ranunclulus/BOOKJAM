@@ -15,12 +15,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => res.status(200).send(response(baseResponse.SUCCESS, "Hello World!")));
+app.get("/health", (req, res) => res.status(200).send(response(baseResponse.SUCCESS, "Hello World!")));
 
 app.use("/places", placesRouter);
 app.use("/records", recordsRouter);
 app.use("/reviews", reviewsRouter);
-app.use(activityRoute)
+app.use(activityRoute);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use(activityRoute);
