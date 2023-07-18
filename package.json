@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "start": "npx babel-node index.js"
+    "start": "node index.js",
+    "build": "npx babel index.js -d dist && npx babel src -d dist/src && npx babel config -d dist/config"
   },
   "engines" : { 
     "npm" : ">=9.0.0",
