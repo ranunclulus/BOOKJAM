@@ -32,7 +32,7 @@ jobs:
     - name: Generate deployment package
       run: |
         npm install
-        zip deploy.zip ./*
+        zip -r deploy.zip .
 
     - name: Beanstalk Deploy
       uses: einaregilsson/beanstalk-deploy@v21
