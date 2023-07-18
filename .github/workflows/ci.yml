@@ -32,22 +32,16 @@ jobs:
     - name: Generate deployment package
       run: |
         npm install
-        npx webpack
-        mkdir -p deploy
-        cp dist/*.js deploy/app.js 
-        cp Procfile deploy/Procfile
-        cp -r .ebextensions deploy/.ebextensions
-        cp -r .platform deploy/.platform
-        cd deploy && zip -r deploy.zip .
+        zip -r deploy.zip .
 
     - name: Beanstalk Deploy
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }} # repo secrets에 추가할 것
         aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }} # repo secrets에 추가할 것
-        application_name: fithub-prod # beanstalk application name --> 헷갈리지 말 것
-        environment_name: Fithub-prod-env # beanstalk environment name --> 헷갈리지 말 것
+        application_name: bookjam-dev # beanstalk application name --> 헷갈리지 말 것
+        environment_name: Bookjam-dev-env # beanstalk environment name --> 헷갈리지 말 것
         version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
         region: ap-northeast-2
-        deployment_package: deploy/deploy.zip
+        deployment_package: ./deploy.zip
         wait_for_environment_recovery: 60
