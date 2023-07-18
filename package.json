@@ -8,6 +8,10 @@
     "dev": "nodemon",
     "start": "npx babel-node index.js"
   },
+  "engines" : { 
+    "npm" : ">=9.0.0",
+    "node" : ">=18.0.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
