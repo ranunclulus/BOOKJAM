@@ -113,6 +113,24 @@ const placesController = {
       //console.log(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
+  },
+  getNews: async (req, res) => {
+    try {
+      const placeId = req.params.placeId;
+      const news = await placesService.retrieveNewsByPlaceId(placeId);
+
+      if(news.error) {
+        if(news.cause == "place") {
+          return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
+        }
+        if(news.cause == "news") {
+          return res.status(400).json(response(baseResponse.NEWS_NOT_FOUND));
+        }
+      }
+      return res.status(200).json(response(baseResponse.SUCCESS, news));
+    } catch (error) {
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
   }
 };
 
