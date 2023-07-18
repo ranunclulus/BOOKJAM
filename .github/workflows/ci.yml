@@ -32,7 +32,7 @@ jobs:
     - name: Generate deployment package
       run: |
         npm install
-        zip -r deploy.zip .
+        zip deploy.zip ./*
 
     - name: Beanstalk Deploy
       uses: einaregilsson/beanstalk-deploy@v21
@@ -43,5 +43,5 @@ jobs:
         environment_name: Bookjam-dev-env # beanstalk environment name --> 헷갈리지 말 것
         version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
         region: ap-northeast-2
-        deployment_package: ./deploy.zip
+        deployment_package: deploy.zip
         wait_for_environment_recovery: 60
