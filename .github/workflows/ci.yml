@@ -42,7 +42,6 @@ jobs:
           cp Procfile deploy/Procfile
           cp -r .platform deploy/.platform
           cd deploy
-          npm install
           zip -r deploy.zip .
 
       - name: Beanstalk Deploy
