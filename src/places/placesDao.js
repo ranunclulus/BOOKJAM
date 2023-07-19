@@ -161,6 +161,21 @@ const placesDao = {
     const [queryActivities] = await connection.query(sql, placeId);
 
     return queryActivities;
+  },
+  checkPlace: async (connection, placeId) => {
+    const sql = `SELECT count(*) as c FROM places WHERE place_id = ${placeId}`;
+    try {
+      const [[records]] = await connection.query(sql);
+      return records.c;
+    } catch (error) {
+      console.log(error);
+      return {error: true};
+    }
+  },
+  selectNewsByPlaceId: async (connection, placeId) => {
+    const sql = `SELECT * FROM place_news WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 10;`;
+    const [queryResult] = await connection.query(sql);
+    return queryResult;
   }
 };
 

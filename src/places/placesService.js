@@ -156,6 +156,23 @@ const placesService = {
     } catch (err) {
       return {error: true};
     }
+  },
+  retrieveNewsByPlaceId: async (placeId) => {
+    try {
+      const connection = await pool.getConnection(async conn => conn);
+      const newsResult = await placesDao.selectNewsByPlaceId(connection, placeId);
+      const placeCnt = await placesDao.checkPlace(connection, placeId);
+
+      if(placeCnt == 0) {
+        return { error:true, cause:"place" };
+      }
+      if(Object.keys(newsResult).length == 0) {
+        return { error:true, cause:"news" };
+      }
+      return newsResult;
+    } catch (error) {
+      return { error:true };
+    }
   }
 };
 
