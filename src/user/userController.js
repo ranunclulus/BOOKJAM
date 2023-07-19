@@ -77,7 +77,7 @@ const userController = {
             if (!isUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
-            const profileImg = req.files[0].path;
+            const profileImg = req.files[0].location;
             const result = await userProvider.putProfile(userId, profileImg);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
