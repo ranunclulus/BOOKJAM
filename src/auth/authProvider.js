@@ -13,6 +13,15 @@ const authProvider = {
 
     return true;
   },
+
+  recommandFriends: async () => {
+    const connection = await pool.getConnection();
+
+    const friendsResult = await authDao.selectThreeRandomUsers(connection);
+
+    console.log(friendsResult);
+    return friendsResult;
+  }
 };
 
 export default authProvider;

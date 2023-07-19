@@ -20,6 +20,11 @@ const authController = {
 
     return res.status(200).json(response(baseResponse.SUCCESS, { isEmailTaken: checkResult }));
   },
+
+  recommandFriends: async (req, res) => {
+    const friendsResult = await authProvider.recommandFriends();
+    return res.status(200).json(response(baseResponse.SUCCESS, {recommandFriends: friendsResult}));
+  }
 };
 
 export default authController;
