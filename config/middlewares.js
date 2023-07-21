@@ -52,5 +52,4 @@ const jwtMiddleware = (req,res,next) =>{
   }).catch(onError);
 }
 
-export default jwtMiddleware;
 export default middlewares;

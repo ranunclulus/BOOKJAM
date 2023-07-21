@@ -1,10 +1,8 @@
 import baseResponse from "../../config/baseResponeStatus";
 import { response } from "../../config/response";
 import authProvider from "./authProvider";
-import crypto from "crypto"
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-
+import crypto from "crypto";
 const validateEmail = (email) => {
   const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$");
 
@@ -41,7 +39,8 @@ const authController = {
 
     // 비밀번호 체크
     // 해싱 알고리즘
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await crypto.createHash("sha512").update(password).digest("hex");
+    console.log(hashedPassword);
     // 비밀번호 확인
     const selectUserPasswordParams = [selectEmail, hashedPassword];
     const passwordRows = await authProvider.checkPassword(selectUserPasswordParams);

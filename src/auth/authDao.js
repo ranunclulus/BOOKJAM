@@ -32,11 +32,13 @@ const authDao = {
   selectUserPassword: async (connection, selectUserPasswordParams)=> {
     const email = selectUserPasswordParams[0];
     const password = selectUserPasswordParams[1];
+    //console.log(email, password);
     const selectUserPasswordQuery = `
         SELECT email, password, username
         FROM users
         WHERE email = '${email}' AND password = '${password}'`;
     const [selectUserPasswordRow] = await connection.query(selectUserPasswordQuery);
+    //console.log(selectUserPasswordRow);
     return selectUserPasswordRow[0];
   },
 
