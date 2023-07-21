@@ -81,7 +81,6 @@ const userDao = {
         group by j1.user_id`;
         try {
             const [result] = await connection.query(sql);
-            console.log(result);
             return result;
         } catch (error) {
             console.log(error);
