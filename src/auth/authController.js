@@ -1,8 +1,9 @@
 import baseResponse from "../../config/baseResponeStatus";
 import { response } from "../../config/response";
 import authProvider from "./authProvider";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import jwt from "../../config/jsonWebToken";
+
 const validateEmail = (email) => {
   const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$");
 
@@ -58,6 +59,7 @@ const authController = {
     }
 
     // jwt 토큰 생성
+    /*
     let token = await jwt.sign({
           userId : userInfoRows.email,
         },
@@ -68,10 +70,16 @@ const authController = {
         }
     );
 
+     */
+    const accessToken = jwt.sign(userInfoRows.email, userInfoRows.username);
+    const refreshToken = jwt.refresh();
     const result = {
       user_id: userInfoRows.user_id,
       email: userInfoRows.email,
-      jwt: token
+      data: {
+        accessToken,
+        refreshToken,
+      },
     };
     return res.status(200).json(response(baseResponse.SUCCESS, result));
   }
