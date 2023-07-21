@@ -25,7 +25,7 @@ const userController = {
         }
     },
 
-    putUsername: async (req, res) => {
+    patchUsername: async (req, res) => {
         try {
             const userId = Number(req.params.userId);
             if (!userId) {
@@ -36,7 +36,7 @@ const userController = {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
             const username = req.body.username;
-            const result = await userProvider.putUsername(userId, username);
+            const result = await userProvider.patchUsername(userId, username);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, result));
@@ -46,7 +46,7 @@ const userController = {
         }
     }, 
 
-    putPassword: async (req, res) => {
+    patchPassword: async (req, res) => {
         try {
             const userId = Number(req.params.userId);
             if (!userId) {
@@ -57,7 +57,7 @@ const userController = {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
             const password = await bcrypt.hash(req.body.password, 12)
-            const result = await userProvider.putPassword(userId, password);
+            const result = await userProvider.patchPassword(userId, password);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, result));
@@ -67,7 +67,7 @@ const userController = {
         }
     }, 
 
-    putProfile: async (req, res) => {
+    patchProfile: async (req, res) => {
         try {
             const userId = Number(req.params.userId);
             if (!userId) {
@@ -77,8 +77,10 @@ const userController = {
             if (!isUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
+
             const profileImg = req.files[0].path;
-            const result = await userProvider.putProfile(userId, profileImg);
+            const result = await userProvider.patchProfile(userId, profileImg);
+
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, result));
@@ -88,7 +90,7 @@ const userController = {
         }
     }, 
 
-    putDisabled: async (req, res) => {
+    patchDisabled: async (req, res) => {
         try {
             const userId = Number(req.params.userId);
             if (!userId) {
@@ -98,7 +100,7 @@ const userController = {
             if (!isUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
-            const result = await userProvider.putDisabled(userId);
+            const result = await userProvider.patchDisabled(userId);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, result));

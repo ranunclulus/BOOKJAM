@@ -1,20 +1,30 @@
 const placesDao = {
-  selectPlaces: async (keyword, sortBy, coord, connection) => {
+  selectPlacesByKeyword: async (keyword, sortBy, coord, connection) => {
     let sql = `
       select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
-      where name like '%${keyword}%'
+      where name like '%${keyword}%' or a.road like '%${keyword}%' or a.jibun like '%${keyword}%'
       order by 
     `;
 
+    let sortColumn;
     if (sortBy === "rating") {
-      sql += `total_rating desc`;
+      sortColumn = "total_rating";
     } else if (sortBy === "review") {
-      sql += `review_count desc`;
+      sortColumn = "review_count";
     } else if (sortBy === "distance") {
-      sql += `st_distance_sphere(st_geomfromtext('point(${coord.lat} ${coord.lon})'), st_geomfromtext('point(l.lat l.lon)'))`;
+      sortColumn = `st_distance_sphere(point(${coord.lon}, ${coord.lat}), point(lon, lat))`;
     }
+
+    const operator = sortBy === "distance" ? ">=" : "<=";
+    const order = sortBy === "distance" ? "asc" : "desc";
+
+    if (last) {
+      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where category = ${category} and place_id = ${last})`;
+    }
+    sql += ` order by ${sortColumn} ${order}`;
+    sql += " limit 10";
 
     const [queryResult] = await connection.query(sql);
 
@@ -88,6 +98,85 @@ const placesDao = {
 
     return queryResult;
   },
+  insertReview: async (review, connection) => {
+    try {
+      const { author, placeId, visitedAt, contents, rating } = review;
+
+      const insertReviewSql = `
+      insert into place_reviews(author, visited_at, place_id, contents, rating) 
+      values (${author}, "${visitedAt}", ${placeId}, '${contents}', ${rating})
+      `;
+
+      await connection.beginTransaction();
+
+      const [queryResult] = await connection.query(insertReviewSql);
+
+      const { insertId: reviewId } = queryResult;
+
+      await connection.commit();
+
+      return reviewId;
+    } catch (error) {
+      await connection.rollback();
+      console.log(error);
+    }
+  },
+  selectPlacesByCategory: async (category, sortBy, coord, last, connection) => {
+    let sql = `
+      select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
+      from places p
+      join place_address a on p.place_id = a.place_id
+      where p.category = ${category}
+    `;
+
+    let sortColumn;
+    if (sortBy === "rating") {
+      sortColumn = "total_rating";
+    } else if (sortBy === "review") {
+      sortColumn = "review_count";
+    } else if (sortBy === "distance") {
+      sortColumn = `st_distance_sphere(point(${coord.lon}, ${coord.lat}), point(lon, lat))`;
+    }
+
+    const operator = sortBy === "distance" ? ">=" : "<=";
+    const order = sortBy === "distance" ? "asc" : "desc";
+
+    if (last) {
+      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where category = ${category} and place_id = ${last})`;
+    }
+    sql += ` order by ${sortColumn} ${order}`;
+    sql += " limit 10";
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  selectActivitiesByPlaceId: async (connection, placeId) => {
+    const sql = `
+        SELECT * 
+        FROM activities
+        WHERE place_id = ?;
+        `
+
+    const [queryActivities] = await connection.query(sql, placeId);
+
+    return queryActivities;
+  },
+  checkPlace: async (connection, placeId) => {
+    const sql = `SELECT count(*) as c FROM places WHERE place_id = ${placeId}`;
+    try {
+      const [[records]] = await connection.query(sql);
+      return records.c;
+    } catch (error) {
+      console.log(error);
+      return {error: true};
+    }
+  },
+  selectNewsByPlaceId: async (connection, placeId) => {
+    const sql = `SELECT * FROM place_news WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 10;`;
+    const [queryResult] = await connection.query(sql);
+    return queryResult;
+  }
 };
 
 export default placesDao;
