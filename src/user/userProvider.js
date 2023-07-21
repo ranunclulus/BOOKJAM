@@ -3,7 +3,7 @@ import userDao from "./userDao";
 
 const userProvider = {
 
-    putUsername: async (userId, username) => {
+    patchUsername: async (userId, username) => {
         try {
             const connection = await pool.getConnection();
             const result = await userDao.updateUsername(connection, userId, username);
@@ -18,7 +18,7 @@ const userProvider = {
         
     },
 
-    putPassword: async (userId, password) => {
+    patchPassword: async (userId, password) => {
         try {
             const connection = await pool.getConnection();
             const result = await userDao.updatePassword(connection, userId, password);
@@ -33,7 +33,7 @@ const userProvider = {
         
     },
     
-    putProfile: async (userId, profileImg) => {
+    patchProfile: async (userId, profileImg) => {
         try {
             const connection = await pool.getConnection();
             const result = await userDao.updateProfile(connection, userId, profileImg);
@@ -48,7 +48,7 @@ const userProvider = {
         
     },
     
-    putDisabled: async (userId) => {
+    patchDisabled: async (userId) => {
         try {
             const connection = await pool.getConnection();
             const result = await userDao.updateDisabled(connection, userId);

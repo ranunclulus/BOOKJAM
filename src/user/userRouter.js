@@ -5,10 +5,11 @@ import middlewares from '../../config/middlewares';
 const userRouter = express.Router();
 
 userRouter.get('/:userId(\\d+)/records', userController.getRecordsByUserId);
-userRouter.put('/:userId(\\d+)/username', userController.putUsername);
-userRouter.put('/:userId(\\d+)/password', userController.putPassword);
-userRouter.put('/:userId(\\d+)/profile', middlewares.s3Upload.array("images", 1), userController.putProfile);
-userRouter.put('/:userId(\\d+)/disabled', userController.putDisabled);
+
+userRouter.patch('/:userId(\\d+)/username', userController.patchUsername);
+userRouter.patch('/:userId(\\d+)/password', userController.patchPassword);
+userRouter.patch('/:userId(\\d+)/profile', upload, userController.patchProfile);
+userRouter.patch('/:userId(\\d+)/disabled', userController.patchDisabled);
 
 
 
