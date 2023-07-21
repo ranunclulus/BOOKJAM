@@ -176,6 +176,11 @@ const placesDao = {
     const sql = `SELECT * FROM place_news WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 10;`;
     const [queryResult] = await connection.query(sql);
     return queryResult;
+  },
+  selectBooksByPlaceId: async (connection, placeId) => {
+    const sql = `SELECT * FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
+    const [queryResult] = await connection.query(sql);
+    return queryResult;
   }
 };
 
