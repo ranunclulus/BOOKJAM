@@ -3,31 +3,20 @@ import { response } from "../../config/response";
 import recordsService from "./recordsService";
 import recordsProvider from "./recordsProvider";
 
-
 const recordsController = {
-    postRecords: async (req, res) => {
+    postRecord: async (req, res) => {
         try{
             let {userId, place, isbn, date, emotions, activity, contents, isNotPublic, comment_not_allowed} = req.body;
-            const photos = req.files;
-            const images_url = [];
-            for(let i = 0; i < photos.length; i++){
-                images_url.push(photos[i].path);    
-            }
-            userId = Number(userId); 
-            place = Number(place);
-            emotions = Number(emotions);
-            activity = Number(activity);
-            isNotPublic = Number(isNotPublic);
-            comment_not_allowed = Number(comment_not_allowed);
+            console.log(req.body);
             const chkUser = await recordsService.checkUser(userId);
             if (!chkUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
             const recordData = [userId, place, isbn, date, activity, emotions, contents, isNotPublic, comment_not_allowed];
-            const records = await recordsProvider.postRecord(recordData, images_url);
-            if (records.error)
+            const result = await recordsProvider.postRecord(recordData);
+            if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, records));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -75,24 +64,22 @@ const recordsController = {
         }
     },
 
-    getComments: async (req, res) => {
+    postRecordImages: async (req, res) => {
         try {
             const recordId = req.params.recordId;
-
-
-            const comments = await recordsProvider.retrieveCommentsByRecordId(recordId);
-            console.log(comments);
-            if(comments.error) {
-                if(comments.cause == 'record') {
-                    return res.status(400).json(response(baseResponse.RECORD_NOT_FOUND));
-                }
-                else {
-                    return res.status(400).json(response(baseResponse.COMMENT_NOT_FOUND));
-                }
+            if (!recordId || recordsService.checkRecord(recordId).error)
+                return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND))
+            const photos = req.files;
+            const images_url = [];
+            for(let i = 0; i < photos.length; i++){
+               images_url.push(photos[i].location);    
             }
-            return res.status(200).json(response(baseResponse.SUCCESS, comments));
+            const result = await recordsProvider.postRecordImages(recordId, images_url);
+            if (result.error)
+                return res.status(500).json(response(baseResponse.SERVER_ERROR));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
     }

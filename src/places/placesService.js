@@ -1,30 +1,42 @@
+import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import pool from "../../config/database";
+import s3 from "../../config/s3";
 import placesDao from "./placesDao";
+
+const getTime = () => {
+  const curr = new Date();
+  const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000;
+  const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+  const krCurr = new Date(utc + KR_TIME_DIFF);
+  return krCurr;
+};
+
+const checkOpen = (hours, krCurr) => {
+  if (!hours) {
+    return null;
+  }
+
+  const { startTime, endTime } = hours;
+  const baseTime = `${krCurr.getFullYear()}-${krCurr.getMonth() + 1}-${krCurr.getDate()}`;
+  const startTimeDate = new Date(`${baseTime} ${startTime}`);
+  const endTimeDate = new Date(`${baseTime} ${endTime}`);
+  const open = startTimeDate.getTime() <= krCurr.getTime() && krCurr.getTime() <= endTimeDate.getTime();
+
+  return open;
+};
 
 const placesService = {
   searchPlaces: async (keyword, sortBy, coord) => {
     const connection = await pool.getConnection();
 
-    let searchResult = await placesDao.selectPlaces(keyword, sortBy, coord, connection);
-    console.log(searchResult);
+    let searchResult = await placesDao.selectPlacesByKeyword(keyword, sortBy, coord, connection);
 
-    const curr = new Date();
-    const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000;
-    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-    const krCurr = new Date(utc + KR_TIME_DIFF);
-    const day = krCurr.getDay();
+    const curr = getTime();
 
     searchResult = await Promise.all(
       searchResult.map(async (place) => {
-        const [hours] = await placesDao.selectPlaceHoursByDay(place.placeId, day, connection);
-        let open = null;
-        if (hours) {
-          const { start_time: startTime, end_time: endTime } = hours;
-          const baseTime = `${krCurr.getFullYear()}-${krCurr.getMonth() + 1}-${krCurr.getDate()}`;
-          const startTimeDate = new Date(`${baseTime} ${startTime}`);
-          const endTimeDate = new Date(`${baseTime} ${endTime}`);
-          open = startTimeDate.getTime() <= krCurr.getTime() && krCurr.getTime() <= endTimeDate.getTime();
-        }
+        const [hours] = await placesDao.selectPlaceHoursByDay(place.placeId, curr.getDay(), connection);
+        const open = checkOpen(hours, curr);
 
         const imagesRaw = await placesDao.selectPlaceImages(place.placeId, connection);
         const images = imagesRaw.map(({ image_url }) => image_url);
@@ -74,11 +86,111 @@ const placesService = {
       })
     );
 
+    connection.release();
+
     return {
       error: false,
       result: reviews,
     };
   },
+  addReview: async (review) => {
+    const connection = await pool.getConnection();
+
+    const [placeExists] = await placesDao.selectPlaceById(review.placeId, connection);
+    if (!placeExists) {
+      return { error: true };
+    }
+
+    const reviewId = await placesDao.insertReview(review, connection);
+    connection.release();
+
+    return { error: false, reviewId };
+  },
+  getPlacesByCategory: async (category, sortBy, coord, last) => {
+    const connection = await pool.getConnection();
+
+    let searchResult = await placesDao.selectPlacesByCategory(category, sortBy, coord, last, connection);
+
+    const curr = getTime();
+
+    searchResult = await Promise.all(
+      searchResult.map(async (place) => {
+        const [hours] = await placesDao.selectPlaceHoursByDay(place.placeId, curr.getDay(), connection);
+        const open = checkOpen(hours, curr);
+
+        const imagesRaw = await placesDao.selectPlaceImages(place.placeId, connection);
+        const images = imagesRaw.map(({ image_url }) => image_url);
+
+        const { road, jibun, ...rest } = place;
+
+        return {
+          ...rest,
+          open,
+          images,
+          address: {
+            road,
+            jibun,
+          },
+        };
+      })
+    );
+
+    connection.release();
+
+    return searchResult;
+  },
+  retrieveActivitiesByPlaceId: async (placeId) => {
+    try {
+      const connection = await pool.getConnection(async conn => conn);
+      const activitiesResult = await placesDao.selectActivitiesByPlaceId(connection, placeId);
+      console.log(activitiesResult);
+      console.log(typeof(activitiesResult));
+      if(Object.keys(activitiesResult).length == 0) {
+        return {error: true};
+      }
+      connection.release();
+      return {
+        error: false,
+        result: activitiesResult
+      };
+    } catch (err) {
+      return {error: true};
+    }
+  },
+  retrieveNewsByPlaceId: async (placeId) => {
+    try {
+      const connection = await pool.getConnection(async conn => conn);
+      const newsResult = await placesDao.selectNewsByPlaceId(connection, placeId);
+      const placeCnt = await placesDao.checkPlace(connection, placeId);
+
+      if(placeCnt == 0) {
+        return { error:true, cause:"place" };
+      }
+      if(Object.keys(newsResult).length == 0) {
+        return { error:true, cause:"news" };
+      }
+      return newsResult;
+    } catch (error) {
+      return { error:true };
+    }
+  },
+  retrieveBooksByPlaceId: async (placeId) => {
+    try {
+      const connection = await pool.getConnection(async conn => conn);
+      const bookResult = await placesDao.selectBooksByPlaceId(connection, placeId);
+      const placeCnt = await placesDao.checkPlace(connection, placeId);
+
+      if(placeCnt == 0) {
+        return { error:true, cause:"place" };
+      }
+      if(Object.keys(bookResult).length == 0) {
+        return { error:true, cause:"books" };
+      }
+      return bookResult;
+    } catch (error) {
+      return { error:true };
+    }
+  }
 };
 
 export default placesService;
