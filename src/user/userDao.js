@@ -124,7 +124,14 @@ const userDao = {
     },
 
     selectMypageReviews: async (connection, userId) => {
-        const sql = `select * from users where user_id = ${userId}`;
+        const sql = `SELECT r.review_id, r.visited_at, p.name, p.category, ri.image_url
+        FROM (select * from place_reviews WHERE author = ${userId}) as r
+        JOIN places as p
+        ON r.place_id = p.place_id
+        LEFT JOIN (select * from place_review_images group by review_id) as ri
+        ON r.review_id = ri.review_id
+        ORDER BY r.created_at desc
+        limit 5`;
         try {
             const [result] = await connection.query(sql);
             return result;
