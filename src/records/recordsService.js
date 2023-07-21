@@ -65,6 +65,20 @@ const recordsService = {
             return {error: true};
         }
     },
+
+    checkRecord: async (recordId) => {
+        try {
+            const connection = await pool.getConnection(async conn => conn);
+            const result = await recordsDao.checkRecord(connection, recordId);
+            connection.release();
+            if (result.error)
+                return {error: true};
+            return result;
+        } catch (error) {
+            console.error(error);
+            return {error: true};
+        }
+    },
 }
 
 export default recordsService;

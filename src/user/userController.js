@@ -77,8 +77,10 @@ const userController = {
             if (!isUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
+
             const profileImg = req.files[0].path;
             const result = await userProvider.patchProfile(userId, profileImg);
+
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, result));
