@@ -16,6 +16,15 @@ const baseResponse = {
   NOT_EMAIL_EXP: { status: "FAIL", code: "2009", message: "이메일 형식이 아닙니다." },
   CATEGORY_UNAVAILABLE: { status: "FAIL", code: 2010, message: "올바른 카테고리가 아닙니다." },
 
+
+
+
+  TOKEN_EMPTY: { status: "FAIL", code: 2030, message: "토큰이 존재하지 않습니다." },
+  TOKEN_VERIFICATION_FAILURE: { status: "FAIL", code: 2031, message: "토큰이 일치하지 않습니다." },
+  SIGNIN_PASSWORD_WRONG: { status: "FAIL", code: 2032, message: "비밀번호가 일치하지 않습니다." },
+  SIGNIN_EMAIL_WRONG: { status: "FAIL", code: 2033, message: "이메일이 일치하지 않습니다." },
+  SIGNIN_INACTIVE_ACCOUNT: { status: "FAIL", code: 2034, message: "활성화된 계정이 아닙니다." },
+
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
 };
