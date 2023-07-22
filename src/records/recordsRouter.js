@@ -7,7 +7,8 @@ const recordsRouter = express.Router();
 recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
 recordsRouter.post('/', recordsController.postRecord);
 recordsRouter.post('/:recordId(\\d+)/images', middlewares.s3Upload.array("images"), recordsController.postRecordImages);
-recordsRouter.put('/:recordId(\\d+)', recordsController.putRecord)
+recordsRouter.put('/:recordId(\\d+)', recordsController.putRecord);
+recordsRouter.delete('/:recordId(\\d+)/images', recordsController.deleteRecordImages);
 
 
 export default recordsRouter;

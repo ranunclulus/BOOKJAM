@@ -107,7 +107,21 @@ const recordsDao = {
             await connection.beginTransaction();
             const result = await connection.query(sql, recordData);
             await connection.commit();
-            return {recorded: true};
+            return result;
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
+            return {error: true};
+        }
+    },
+
+    deleteRecordImages: async (connection, recordId) => {
+        const sql = `DELETE FROM record_images where record_id = ${recordId}`;
+        try {
+            await connection.beginTransaction();
+            const result = await connection.query(sql);
+            await connection.commit();
+            return result;
         } catch (error) {
             await connection.rollback();
             console.error(error);

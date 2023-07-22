@@ -64,6 +64,19 @@ const recordsProvider = {
             return { error:true };
         }
     },
+
+    deleteRecordImages: async (recordId) => {
+        try {
+            const connection = await pool.getConnection();
+            const result = await recordsDao.deleteRecordImages(connection, recordId);
+            connection.release();
+            if (result.error)
+                return {error: true}
+            return {deleted: true};
+        } catch (error) {
+            return { error:true };
+        }
+    },
 }
 
 export default recordsProvider;
