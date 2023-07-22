@@ -41,7 +41,7 @@ const authController = {
     // 비밀번호 체크
     // 해싱 알고리즘
     const hashedPassword = await crypto.createHash("sha512").update(password).digest("hex");
-    console.log(hashedPassword);
+    //console.log(hashedPassword);
     // 비밀번호 확인
     const selectUserPasswordParams = [selectEmail, hashedPassword];
     const passwordRows = await authProvider.checkPassword(selectUserPasswordParams);
@@ -71,8 +71,15 @@ const authController = {
     );
 
      */
+    // 토큰 발급
     const accessToken = jwt.sign(userInfoRows.email, userInfoRows.username);
     const refreshToken = jwt.refresh();
+    // refreshToken 저장
+    const postRefresh = authProvider.saveRefresh(userInfoRows.user_id, refreshToken);
+    if (postRefresh.error) {
+      return res.status(200).json(baseResponse.REFRESH_TOKEN_SAVE_ERROR);
+    }
+    // 성공했다면
     const result = {
       user_id: userInfoRows.user_id,
       email: userInfoRows.email,

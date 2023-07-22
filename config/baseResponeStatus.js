@@ -26,6 +26,7 @@ const baseResponse = {
   SIGNIN_PASSWORD_WRONG: { status: "FAIL", code: 2032, message: "비밀번호가 일치하지 않습니다." },
   SIGNIN_EMAIL_WRONG: { status: "FAIL", code: 2033, message: "이메일이 일치하지 않습니다." },
   SIGNIN_INACTIVE_ACCOUNT: { status: "FAIL", code: 2034, message: "활성화된 계정이 아닙니다." },
+  REFRESH_TOKEN_SAVE_ERROR: { status: "FAIL", code: 2035, message: "Refresh 토큰 저장에 실패했습니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },

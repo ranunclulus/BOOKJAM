@@ -53,6 +53,17 @@ const authDao = {
 
     return queryResult[0];
   },
+
+  updateUserRefreshToken: async (userId, refreshToken, connection) => {
+    const sql = `UPDATE users SET refresh_token = '${refreshToken}' WHERE user_id = ${userId}`;
+    try {
+      const [result] = await connection.query(sql);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return {error: true};
+    }
+  }
 };
 
 export default authDao;
