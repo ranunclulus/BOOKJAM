@@ -82,7 +82,38 @@ const recordsController = {
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
         }
-    }
+    },
+
+    putRecord: async (req, res) => {
+        try {
+            const recordId = req.params.recordId;
+            if (!recordId || recordsService.checkRecord(recordId).error)
+                return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND))
+            const recordData = req.body;
+            const result = await recordsProvider.putRecord(recordId, recordData);
+            if (result.error)
+                return res.status(500).json(response(baseResponse.SERVER_ERROR));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        }
+    },
+
+    deleteRecordImages: async (req, res) => {
+        try {
+            const recordId = req.params.recordId;
+            if (!recordId || recordsService.checkRecord(recordId).error)
+                return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND))
+            const result = await recordsProvider.deleteRecordImages(recordId, recordId);
+            if (result.error)
+                return res.status(500).json(response(baseResponse.SERVER_ERROR));
+            return res.status(200).json(response(baseResponse.SUCCESS, result));
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        }
+    },
 }
 
 export default recordsController;
