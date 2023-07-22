@@ -50,7 +50,20 @@ const recordsProvider = {
         } catch (err) {
             return { error:true };
         }
-    }
+    },
+
+    putRecord: async (recordId, recordData) => {
+        try {
+            const connection = await pool.getConnection();
+            const result = await recordsDao.updateRecord(connection, recordId, recordData);
+            connection.release();
+            if (result.error)
+                return {error: true}
+            return {updated: true};
+        } catch (error) {
+            return { error:true };
+        }
+    },
 }
 
 export default recordsProvider;

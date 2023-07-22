@@ -100,6 +100,20 @@ const recordsDao = {
         }
         
     },
+
+    updateRecord: async (connection, recordId, recordData) => {
+        const sql = `UPDATE records SET ? , updated_at = NOW(6) where record_id = ${recordId}`;
+        try {
+            await connection.beginTransaction();
+            const result = await connection.query(sql, recordData);
+            await connection.commit();
+            return {recorded: true};
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
+            return {error: true};
+        }
+    },
 }
 
 export default recordsDao;
