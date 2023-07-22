@@ -3,6 +3,8 @@ import { response } from "../../config/response";
 import authProvider from "./authProvider";
 import crypto from "crypto";
 import jwt from "../../config/jsonWebToken";
+import bcrypt from "bcrypt";
+import authDao from "./authDao";
 
 const validateEmail = (email) => {
   const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$");
@@ -31,22 +33,15 @@ const authController = {
   login: async (req, res) => {
     const {email, password} = req.body;
     // 이메일 체크
-    const emailRows = await authProvider.checkEmail(email);
+    const userInfo = await authProvider.findByEmail(email);
 
-    if(!emailRows) {
+    if(!userInfo.email) {
       return res.status(400).json(baseResponse.SIGNIN_EMAIL_WRONG);
     }
-    const selectEmail = emailRows.email;
 
-    // 비밀번호 체크
-    // 해싱 알고리즘
-    const hashedPassword = await crypto.createHash("sha512").update(password).digest("hex");
-    //console.log(hashedPassword);
-    // 비밀번호 확인
-    const selectUserPasswordParams = [selectEmail, hashedPassword];
-    const passwordRows = await authProvider.checkPassword(selectUserPasswordParams);
-    // 비밀번호 다르면 에러 메시지
-    if(passwordRows.password !== hashedPassword) {
+    const isValidPassword = await bcrypt.compare(password, userInfo.password);
+
+    if (!isValidPassword) {
       return res.status(400).json(baseResponse.SIGNIN_PASSWORD_WRONG);
     }
 
@@ -54,23 +49,10 @@ const authController = {
     const userInfoRows = await authProvider.accountCheck(email);
 
     // 비활성화 계정이라면
-    if (userInfoRows.disabled_at !== null) {
+    if (userInfo.disabled_at !== null) {
       return res.status(400).json(baseResponse.SIGNIN_INACTIVE_ACCOUNT);
     }
 
-    // jwt 토큰 생성
-    /*
-    let token = await jwt.sign({
-          userId : userInfoRows.email,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "365d",
-          subject: "userInfo",
-        }
-    );
-
-     */
     // 토큰 발급
     const accessToken = jwt.sign(userInfoRows.email, userInfoRows.username);
     const refreshToken = jwt.refresh();

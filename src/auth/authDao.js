@@ -17,9 +17,9 @@ const authDao = {
     return queryResult;
   },
 
-  selectUserEmailByEmail: async (email, connection) => {
+  selectUserInfoByEmail: async (email, connection) => {
     const sql = `
-      select email
+      select email, password, disabled_at
       from users
       where email = '${email}'
     `;

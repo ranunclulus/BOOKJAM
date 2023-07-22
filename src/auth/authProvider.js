@@ -22,10 +22,10 @@ const authProvider = {
     return friendsResult;
   },
 
-  checkEmail: async (email) => {
+  findByEmail: async (email) => {
     const connection = await pool.getConnection();
 
-    const checkResult = await authDao.selectUserEmailByEmail(email, connection);
+    const checkResult = await authDao.selectUserInfoByEmail(email, connection);
 
     if (!checkResult) {
       return false;
