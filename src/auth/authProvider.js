@@ -7,6 +7,8 @@ const authProvider = {
 
     const checkResult = await authDao.selectUserByEmail(email, connection);
 
+    connection.release();
+
     if (!checkResult) {
       return false;
     }
@@ -19,9 +21,10 @@ const authProvider = {
 
     const friendsResult = await authDao.selectThreeRandomUsers(connection);
 
-    console.log(friendsResult);
+    connection.release();
+
     return friendsResult;
-  }
+  },
 };
 
 export default authProvider;
