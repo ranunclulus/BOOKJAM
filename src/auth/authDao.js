@@ -15,6 +15,68 @@ const authDao = {
     const sql = "select user_id, name, email, username, profile_image, username from users order by rand() limit 3";
     const [queryResult] = await connection.query(sql);
     return queryResult;
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  insertUser: async (connection, user) => {
+    const {kakao, email, password, username} = user;
+    const sql = `
+    INSERT INTO users (email, password, username, created_at, updated_at) 
+    VALUES ( '${email}', '${password}', '${username}', NOW(), NOW())
+    `;
+
+    const [newUser] = await connection.query(sql);
+    return newUser.email;
   }
 };
 

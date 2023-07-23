@@ -9,9 +9,9 @@
     "start": "node index.js",
     "build": "npx babel index.js -d dist && npx babel src -d dist/src && npx babel config -d dist/config"
   },
-  "engines" : { 
-    "npm" : ">=9.0.0",
-    "node" : ">=18.0.0"
+  "engines": {
+    "npm": ">=9.0.0",
+    "node": ">=18.0.0"
   },
   "author": "",
   "license": "ISC",

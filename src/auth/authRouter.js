@@ -7,4 +7,8 @@ authRouter.post("/email-check", authController.checkEmailTaken);
 
 authRouter.get("/friends", authController.recommandFriends);
 
+
+
+authRouter.post("/signUp", authController.signUp);
+
 export default authRouter;

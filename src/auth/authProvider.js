@@ -21,6 +21,60 @@ const authProvider = {
 
     console.log(friendsResult);
     return friendsResult;
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  createNewUser: async (user) => {
+
+    const connection = await pool.getConnection();
+    const newUser = authDao.insertUser(connection, user);
+    if (!newUser) {
+      return { error:true }
+    }
+    return newUser;
   }
 };
 
