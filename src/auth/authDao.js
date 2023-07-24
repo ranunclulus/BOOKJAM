@@ -17,66 +17,19 @@ const authDao = {
     return queryResult;
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   insertUser: async (connection, user) => {
-    const {kakao, email, password, username} = user;
-    const sql = `
-    INSERT INTO users (email, password, username, created_at, updated_at) 
-    VALUES ( '${email}', '${password}', '${username}', NOW(), NOW())
-    `;
-
-    const [newUser] = await connection.query(sql);
-    return newUser.email;
+    try {
+      const {kakao, email, password, username} = user;
+      const sql = `
+      INSERT INTO users (email, password, username) VALUES ("${email}", "${password}", "${username}")`;
+      await connection.beginTransaction();
+      const [newUser] = await connection.query(sql);
+      await connection.commit();
+      return newUser.email;
+    } catch (error) {
+      await connection.rollback();
+      console.log(error);
+    }
   }
 };
 
