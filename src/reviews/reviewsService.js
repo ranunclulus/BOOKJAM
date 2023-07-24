@@ -14,6 +14,8 @@ const reviewsService = {
 
     await reviewsDao.deleteReview(reviewId, connection);
 
+    connection.release();
+
     return { error: false, result: { deleted: true } };
   },
   addReviewImages: async (reviewId, images) => {
