@@ -17,6 +17,7 @@ const baseResponse = {
   NOT_EMAIL_EXP: { status: "FAIL", code: "2009", message: "이메일 형식이 아닙니다." },
   CATEGORY_UNAVAILABLE: { status: "FAIL", code: 2010, message: "올바른 카테고리가 아닙니다." },
   RECORDID_NOT_FOUND: { status: "FAIL", code: 2011, message: "존재하지 않는 기록입니다." },
+  ALREADY_FOLLOWED: { status: "FAIL", code: 2012, message: "이미 친구로 등록된 회원입니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
