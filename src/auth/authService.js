@@ -4,7 +4,7 @@ import authDao from "./authDao";
 const authService = {
     createNewUser: async (user) => {
         try {
-            console.log(user);
+            console.log(user);햣
             const connection = await pool.getConnection();
             const newUser = authDao.insertUser(connection, user);
             if (!newUser) {
