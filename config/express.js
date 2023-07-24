@@ -8,12 +8,14 @@ import reviewsRouter from "../src/reviews/reviewsRouter";
 import authRouter from "../src/auth/authRouter";
 import userRouter from "../src/user/userRouter";
 import activityRouter from "../src/Activity/activityRouter";
+import middlewares from "./middlewares";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(middlewares.logger);
 
 app.get("/health", (req, res) => res.status(200).send(response(baseResponse.SUCCESS, "Hello World!")));
 
