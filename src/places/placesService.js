@@ -141,56 +141,60 @@ const placesService = {
   },
   retrieveActivitiesByPlaceId: async (placeId) => {
     try {
-      const connection = await pool.getConnection(async conn => conn);
+      const connection = await pool.getConnection(async (conn) => conn);
       const activitiesResult = await placesDao.selectActivitiesByPlaceId(connection, placeId);
       console.log(activitiesResult);
-      console.log(typeof(activitiesResult));
-      if(Object.keys(activitiesResult).length == 0) {
-        return {error: true};
+      console.log(typeof activitiesResult);
+      if (Object.keys(activitiesResult).length == 0) {
+        return { error: true };
       }
       connection.release();
       return {
         error: false,
-        result: activitiesResult
+        result: activitiesResult,
       };
     } catch (err) {
-      return {error: true};
+      return { error: true };
     }
   },
   retrieveNewsByPlaceId: async (placeId) => {
     try {
-      const connection = await pool.getConnection(async conn => conn);
+      const connection = await pool.getConnection(async (conn) => conn);
       const newsResult = await placesDao.selectNewsByPlaceId(connection, placeId);
       const placeCnt = await placesDao.checkPlace(connection, placeId);
 
-      if(placeCnt == 0) {
-        return { error:true, cause:"place" };
+      connection.release();
+
+      if (placeCnt == 0) {
+        return { error: true, cause: "place" };
       }
-      if(Object.keys(newsResult).length == 0) {
-        return { error:true, cause:"news" };
+      if (Object.keys(newsResult).length == 0) {
+        return { error: true, cause: "news" };
       }
       return newsResult;
     } catch (error) {
-      return { error:true };
+      return { error: true };
     }
   },
   retrieveBooksByPlaceId: async (placeId) => {
     try {
-      const connection = await pool.getConnection(async conn => conn);
+      const connection = await pool.getConnection(async (conn) => conn);
       const bookResult = await placesDao.selectBooksByPlaceId(connection, placeId);
       const placeCnt = await placesDao.checkPlace(connection, placeId);
 
-      if(placeCnt == 0) {
-        return { error:true, cause:"place" };
+      connection.release();
+
+      if (placeCnt == 0) {
+        return { error: true, cause: "place" };
       }
-      if(Object.keys(bookResult).length == 0) {
-        return { error:true, cause:"books" };
+      if (Object.keys(bookResult).length == 0) {
+        return { error: true, cause: "books" };
       }
       return bookResult;
     } catch (error) {
-      return { error:true };
+      return { error: true };
     }
-  }
+  },
 };
 
 export default placesService;
