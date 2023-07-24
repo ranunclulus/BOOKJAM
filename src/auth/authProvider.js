@@ -7,6 +7,8 @@ const authProvider = {
 
     const checkResult = await authDao.selectUserByEmail(email, connection);
 
+    connection.release();
+
     if (!checkResult) {
       return false;
     }
@@ -19,63 +21,10 @@ const authProvider = {
 
     const friendsResult = await authDao.selectThreeRandomUsers(connection);
 
-    console.log(friendsResult);
+    connection.release();
+
     return friendsResult;
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  createNewUser: async (user) => {
-
-    const connection = await pool.getConnection();
-    const newUser = authDao.insertUser(connection, user);
-    if (!newUser) {
-      return { error:true }
-    }
-    return newUser;
-  }
 };
 
 export default authProvider;
