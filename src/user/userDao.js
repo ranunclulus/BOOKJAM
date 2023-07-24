@@ -148,12 +148,9 @@ const userDao = {
       values (${userId}, ${targetUserId})
     `;
 
-    logger.info("inserting follow");
     try {
       await connection.beginTransaction();
       const [queryResult] = await connection.query(sql);
-
-      console.log(queryResult);
 
       await connection.commit();
       return queryResult;
