@@ -131,6 +131,24 @@ const placesController = {
     } catch (error) {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
+  },
+  getBooks: async (req, res) => {
+    try {
+      const placeId = req.params.placeId;
+      const books = await placesService.retrieveBooksByPlaceId(placeId);
+
+      if(books.error) {
+        if(books.cause == "place") {
+          return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
+        }
+        if(books.cause == "books") {
+          return res.status(400).json(response(baseResponse.BOOKS_NOT_FOUND));
+        }
+      }
+      return res.status(200).json(response(baseResponse.SUCCESS, books));
+    } catch (error) {
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
   }
 };
 

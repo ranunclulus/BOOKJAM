@@ -1,22 +1,14 @@
 import express from 'express';
 import recordsController from './recordsController';
-import multer from 'multer';
+import middlewares from '../../config/middlewares';
 
 const recordsRouter = express.Router();
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'S3 bucket url'); //파일 올리면 저장할 폴더 위치
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}_${file.originalname}`); //저장할 때 파일이름
-    }
-});
- 
-const upload = multer({ storage: storage }).array('photos');
-
 recordsRouter.get('/:userId(\\d+)/friends', recordsController.getFriendsRecords);
-recordsRouter.post('/', upload, recordsController.postRecords);
+recordsRouter.post('/', recordsController.postRecord);
+recordsRouter.post('/:recordId(\\d+)/images', middlewares.s3Upload.array("images"), recordsController.postRecordImages);
+recordsRouter.put('/:recordId(\\d+)', recordsController.putRecord);
+recordsRouter.delete('/:recordId(\\d+)/images', recordsController.deleteRecordImages);
 
 
 export default recordsRouter;

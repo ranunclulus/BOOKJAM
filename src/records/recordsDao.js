@@ -17,16 +17,11 @@ const recordsDao = {
         }
     },
 
-    insertRecord: async (connection, recordData, images_url) => {
+    insertRecord: async (connection, recordData) => {
         const sql_record = `INSERT INTO records (author,  place_id, isbn, date, activities, emotions, contents, isNotPublic, comment_not_allowed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        const sql_record_image = `INSERT INTO record_images (record_id, image_url) VALUES (?, ?)`;
         try {
             await connection.beginTransaction();
             const [record_results] = await connection.query(sql_record, recordData);
-            console.log(images_url);
-            for (let url of images_url) {
-                await connection.query(sql_record_image, [record_results.insertId, url]);
-            }
             await connection.commit();
             return record_results;
         } catch (error) {
@@ -74,6 +69,62 @@ const recordsDao = {
             return records.c;
         } catch (error) {
             console.log(error);
+            return {error: true};
+        }
+    },
+
+    checkRecord: async (connection, recordId) => {
+        const sql = `SELECT count(*) as c FROM records WHERE record_id = ${recordId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    insertRecordImages: async (connection, recordId, images_url) => {
+        const sql_record_image = `INSERT INTO record_images (record_id, image_url) VALUES (?, ?)`;
+        try {
+            await connection.beginTransaction();
+            for (let url of images_url) {
+               await connection.query(sql_record_image, [recordId, url]);
+            }
+            await connection.commit();
+            return {recorded: true};
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
+            return {error: true};
+        }
+        
+    },
+
+    updateRecord: async (connection, recordId, recordData) => {
+        const sql = `UPDATE records SET ? , updated_at = NOW(6) where record_id = ${recordId}`;
+        try {
+            await connection.beginTransaction();
+            const result = await connection.query(sql, recordData);
+            await connection.commit();
+            return result;
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
+            return {error: true};
+        }
+    },
+
+    deleteRecordImages: async (connection, recordId) => {
+        const sql = `DELETE FROM record_images where record_id = ${recordId}`;
+        try {
+            await connection.beginTransaction();
+            const result = await connection.query(sql);
+            await connection.commit();
+            return result;
+        } catch (error) {
+            await connection.rollback();
+            console.error(error);
             return {error: true};
         }
     },

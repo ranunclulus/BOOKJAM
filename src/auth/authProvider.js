@@ -7,11 +7,23 @@ const authProvider = {
 
     const checkResult = await authDao.selectUserByEmail(email, connection);
 
+    connection.release();
+
     if (!checkResult) {
       return false;
     }
 
     return true;
+  },
+
+  recommandFriends: async () => {
+    const connection = await pool.getConnection();
+
+    const friendsResult = await authDao.selectThreeRandomUsers(connection);
+
+    connection.release();
+
+    return friendsResult;
   },
 };
 

@@ -24,7 +24,7 @@ const userController = {
     }
   },
 
-  putUsername: async (req, res) => {
+  patchUsername: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
       if (!userId) {
@@ -35,7 +35,7 @@ const userController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const username = req.body.username;
-      const result = await userProvider.putUsername(userId, username);
+      const result = await userProvider.patchUsername(userId, username);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -44,7 +44,7 @@ const userController = {
     }
   },
 
-  putPassword: async (req, res) => {
+  patchPassword: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
       if (!userId) {
@@ -55,7 +55,7 @@ const userController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const password = await bcrypt.hash(req.body.password, 12);
-      const result = await userProvider.putPassword(userId, password);
+      const result = await userProvider.patchPassword(userId, password);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -64,7 +64,7 @@ const userController = {
     }
   },
 
-  putProfile: async (req, res) => {
+  patchProfile: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
       if (!userId) {
@@ -74,8 +74,10 @@ const userController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
+
       const profileImg = req.files[0].path;
-      const result = await userProvider.putProfile(userId, profileImg);
+      const result = await userProvider.patchProfile(userId, profileImg);
+
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -84,7 +86,7 @@ const userController = {
     }
   },
 
-  putDisabled: async (req, res) => {
+  patchDisabled: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
       if (!userId) {
@@ -94,7 +96,7 @@ const userController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const result = await userProvider.putDisabled(userId);
+      const result = await userProvider.patchDisabled(userId);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -102,8 +104,24 @@ const userController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
-  postFollowing: async (req, res) => {
-    const { userId } = req; // jwt 구현
+
+  getMyPage: async (req, res) => {
+    try {
+      const userId = Number(req.params.userId);
+      if (!userId) {
+        return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
+      }
+      const isUser = await userService.checkUser(userId);
+      if (!isUser) {
+        return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+      }
+      const result = await userService.getMyPage(userId);
+      if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
+      return res.status(200).json(response(baseResponse.SUCCESS, result));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
   },
 };
 
