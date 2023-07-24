@@ -3,6 +3,7 @@ import { response } from "../../config/response";
 import userService from "./userService";
 import userProvider from "./userProvider";
 import bcrypt from "bcrypt";
+import logger from "../../config/logger";
 
 const userController = {
   getRecordsByUserId: async (req, res) => {
@@ -120,6 +121,33 @@ const userController = {
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
       console.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
+
+  postFollowing: async (req, res) => {
+    try {
+      const { userId = 1 } = req; // TODO: jwt 추가되면 수정 할 것
+      const {
+        body: { targetUserId },
+      } = req;
+
+      const isUser = await userService.checkUser(targetUserId);
+      if (!isUser) {
+        return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+      }
+
+      const alreadyFollowed = await userProvider.checkFollowExists(userId, targetUserId);
+      if (alreadyFollowed) {
+        return res.status(400).json(response(baseResponse.ALREADY_FOLLOWED));
+      }
+
+      const result = await userService.addFollower(userId, targetUserId);
+      logger.info(`Follow Result: ${result}`);
+
+      return res.status(201).json(response(baseResponse.SUCCESS, { following: true }));
+    } catch (error) {
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
