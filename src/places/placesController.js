@@ -1,4 +1,5 @@
 import baseResponse from "../../config/baseResponeStatus";
+import logger from "../../config/logger";
 import { response } from "../../config/response";
 import placesService from "./placesService";
 
@@ -28,7 +29,7 @@ const placesController = {
 
       return res.status(200).json(response(baseResponse.SUCCESS, searchResults));
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
