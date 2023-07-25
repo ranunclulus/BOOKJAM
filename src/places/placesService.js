@@ -1,5 +1,6 @@
 import pool from "../../config/database";
 import placesDao from "./placesDao";
+import { getRegExp } from "korean-regexp";
 
 const getTime = () => {
   const curr = new Date();
@@ -27,7 +28,9 @@ const placesService = {
   searchPlaces: async (keyword, sortBy, coord, last) => {
     const connection = await pool.getConnection();
 
-    let searchResult = await placesDao.selectPlacesByKeyword(keyword, sortBy, coord, last, connection);
+    const koreanRegExp = getRegExp(keyword).toString().slice(1, -2);
+
+    let searchResult = await placesDao.selectPlacesByRegExp(koreanRegExp, sortBy, coord, last, connection);
 
     const curr = getTime();
 

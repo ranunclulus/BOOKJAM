@@ -1,10 +1,10 @@
 const placesDao = {
-  selectPlacesByKeyword: async (keyword, sortBy, coord, last, connection) => {
+  selectPlacesByRegExp: async (regexp, sortBy, coord, last, connection) => {
     let sql = `
       select p.place_id "placeId", p.name, p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
-      where name like '%${keyword}%' or a.road like '%${keyword}%' or a.jibun like '%${keyword}%'
+      where name regexp '${regexp}' or a.jibun regexp '${regexp}' or a.road regexp '${regexp}'
     `;
 
     let sortColumn;
