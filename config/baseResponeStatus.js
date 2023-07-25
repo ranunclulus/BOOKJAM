@@ -19,9 +19,10 @@ const baseResponse = {
   RECORDID_NOT_FOUND: { status: "FAIL", code: 2011, message: "존재하지 않는 기록입니다." },
   ALREADY_FOLLOWED: { status: "FAIL", code: 2012, message: "이미 친구로 등록된 회원입니다." },
   COMMENT_NOT_FOUND: { status: "FAIL", code: 2012, message: "존재하지 않는 댓글입니다." },
-  IS_NOT_OWNER: { status: "FAIL", code: 2013, message: "댓글을 쓴 유저가 아닙니다." },
+  IS_NOT_COMMENT_OWNER: { status: "FAIL", code: 2013, message: "댓글을 쓴 유저가 아닙니다." },
   JWT_TOKEN_EMPTY: { status: "FAIL", code: 2013, message: "JWT 토큰이 없습니다." },
   JWT_VERIFICATION_FAILED: { status: "FAIL", code: 2014, message: "JWT 검증에 실패했습니다." },
+  IS_NOT_REVIEW_OWNER: { status: "FAIL", code: 2015, message: "리뷰 작성자가 아닙니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
