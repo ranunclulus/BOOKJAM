@@ -6,13 +6,12 @@ import recordsService from "./recordsService";
 const recordsController = {
     postRecord: async (req, res) => {
         try{
-            let {userId, place, isbn, date, emotions, activity, contents, isNotPublic, comment_not_allowed} = req.body;
-            console.log(req.body);
+            const {userId, place, isbn, date, emotions, activity, contents, isNotPublic, commentNotAllowed} = req.body;
             const chkUser = await recordsProvider.checkUser(userId);
             if (!chkUser) {
                 return res.status(404).json(response(baseResponse.USER_NOT_FOUND))
             }
-            const recordData = [userId, place, isbn, date, activity, emotions, contents, isNotPublic, comment_not_allowed];
+            const recordData = [userId, place, isbn, date, activity, emotions, contents, isNotPublic, commentNotAllowed];
             const result = await recordsService.postRecord(recordData);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
