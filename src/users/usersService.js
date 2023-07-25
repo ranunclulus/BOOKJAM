@@ -1,11 +1,11 @@
 import pool from "../../config/database";
-import userDao from "./userDao";
+import usersDao from "./usersDao";
 
-const userProvider = {
+const usersService = {
   patchUsername: async (userId, username) => {
     try {
       const connection = await pool.getConnection();
-      const result = await userDao.updateUsername(connection, userId, username);
+      const result = await usersDao.updateUsername(connection, userId, username);
       connection.release();
       if (result.error) return { error: true };
       return { changed: true };
@@ -18,7 +18,7 @@ const userProvider = {
   patchPassword: async (userId, password) => {
     try {
       const connection = await pool.getConnection();
-      const result = await userDao.updatePassword(connection, userId, password);
+      const result = await usersDao.updatePassword(connection, userId, password);
       connection.release();
       if (result.error) return { error: true };
       return { changed: true };
@@ -31,7 +31,7 @@ const userProvider = {
   patchProfile: async (userId, profileImg) => {
     try {
       const connection = await pool.getConnection();
-      const result = await userDao.updateProfile(connection, userId, profileImg);
+      const result = await usersDao.updateProfile(connection, userId, profileImg);
       connection.release();
       if (result.error) return { error: true };
       return { changed: true };
@@ -44,7 +44,7 @@ const userProvider = {
   patchDisabled: async (userId) => {
     try {
       const connection = await pool.getConnection();
-      const result = await userDao.updateDisabled(connection, userId);
+      const result = await usersDao.updateDisabled(connection, userId);
       connection.release();
       if (result.error) return { error: true };
       return { disabled: true };
@@ -56,7 +56,7 @@ const userProvider = {
 
   checkFollowExists: async (userId, targetUserId) => {
     const connection = await pool.getConnection();
-    const [alreadyFollowed] = await userDao.selectUserFollow(userId, targetUserId, connection);
+    const [alreadyFollowed] = await usersDao.selectUserFollow(userId, targetUserId, connection);
 
     if (alreadyFollowed) {
       return true;
@@ -65,4 +65,4 @@ const userProvider = {
   },
 };
 
-export default userProvider;
+export default usersService;
