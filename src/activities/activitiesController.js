@@ -1,15 +1,15 @@
 
-import activityProvider from "./activityProvider";
+import activitiesProvider from "./activitiesProvider";
 import { response } from "../../config/response";
 import baseResponse from "../../config/baseResponeStatus";
 
 
-const activityController = {
+const activitiesController = {
     getActivityByActivityId: async (req, res) => {
         try {
             const activityId = req.params.activityId;
 
-            const activity = await activityProvider.retrieveActivityByActivityId(activityId);
+            const activity = await activitiesProvider.retrieveActivityByActivityId(activityId);
 
             if(activity.error) {
                 return res.status(400).json(response(baseResponse.ACTIVITY_ACTIVITYID_EMPTY));
@@ -22,4 +22,4 @@ const activityController = {
     },
 }
 
-export default activityController;
+export default activitiesController;

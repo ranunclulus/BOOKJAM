@@ -7,7 +7,7 @@ import placesRouter from "../src/places/placesRouter";
 import reviewsRouter from "../src/reviews/reviewsRouter";
 import authRouter from "../src/auth/authRouter";
 import userRouter from "../src/user/userRouter";
-import activityRouter from "../src/Activity/activityRouter";
+import activitiesRouter from "../src/activities/activitiesRouter";
 import middlewares from "./middlewares";
 
 const app = express();
@@ -24,6 +24,6 @@ app.use("/records", recordsRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
-app.use("/activities", activityRouter);
+app.use("/activities", activitiesRouter);
 
 export default app;

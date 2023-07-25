@@ -16,7 +16,7 @@ const recordsController = {
             const result = await recordsProvider.postRecord(recordData);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, result));
+            return res.status(201).json(response(baseResponse.SUCCESS, result));
         } catch (error){
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -77,7 +77,7 @@ const recordsController = {
             const result = await recordsProvider.postRecordImages(recordId, images_url);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, result));
+            return res.status(201).json(response(baseResponse.SUCCESS, result));
         } catch (error) {
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -93,7 +93,7 @@ const recordsController = {
             const result = await recordsProvider.putRecord(recordId, recordData);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, result));
+            return res.status(202).json(response(baseResponse.SUCCESS, result));
         } catch (error) {
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -108,7 +108,36 @@ const recordsController = {
             const result = await recordsProvider.deleteRecordImages(recordId, recordId);
             if (result.error)
                 return res.status(500).json(response(baseResponse.SERVER_ERROR));
-            return res.status(200).json(response(baseResponse.SUCCESS, result));
+            return res.status(202).json(response(baseResponse.SUCCESS, result));
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        }
+    },
+
+    patchComment: async (req, res) => {
+        try {
+            const commentId = req.params.commentId;
+            const userId = req.body.userId;
+            const contents = req.body.contents;
+            if (!commentId || await recordsService.checkComment(commentId).error === true)
+                return res.status(404).json(response(baseResponse.COMMENT_NOT_FOUND));
+            if (!userId) return res.status(404).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
+            const chkUser= await recordsService.checkUser(userId);
+            if (chkUser.error) {
+                console.log(123);
+                return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+            }
+            const owner = await recordsService.checkOwner(userId, commentId)
+            if (owner.owner === false)
+                return res.status(401).json(response(baseResponse.IS_NOT_OWNER));
+            if (owner.error){
+                return res.status(500).json(response(baseResponse.SERVER_ERROR));
+            }
+            const result = await recordsProvider.patchComment(commentId, contents);
+            if (result.error)
+                return res.status(500).json(response(baseResponse.SERVER_ERROR));
+            return res.status(202).json(response(baseResponse.SUCCESS, result));
         } catch (error) {
             console.error(error);
             return res.status(500).json(response(baseResponse.SERVER_ERROR));

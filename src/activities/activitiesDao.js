@@ -1,4 +1,4 @@
-const activityDao = {
+const activitiesDao = {
     selectActivityByActivityId: async (connection, activityId) => {
         const sql = `
             SELECT activity_id, created_at, title, info, capacity, headcount, total_rating, review_count, image_url, 
@@ -11,4 +11,4 @@ const activityDao = {
     },
 }
 
-export default activityDao;
+export default activitiesDao;
