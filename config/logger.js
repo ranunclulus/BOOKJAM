@@ -49,6 +49,7 @@ if (process.env.NODE_ENV !== "production") {
         winston.format.colorize(), // log level별로 색상 적용하기
         winston.format.simple() // `${info.level}: ${info.message} JSON.stringify({ ...rest })` 포맷으로 출력
       ),
+      handleExceptions: true,
     })
   );
 }
