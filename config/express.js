@@ -19,11 +19,11 @@ app.use(middlewares.logger);
 
 app.get("/health", (req, res) => res.status(200).send(response(baseResponse.SUCCESS, "Hello World!")));
 
-app.use("/places", placesRouter);
-app.use("/records", recordsRouter);
-app.use("/reviews", reviewsRouter);
-app.use("/user", userRouter);
+app.use("/places", middlewares.authCheck, placesRouter);
+app.use("/records", middlewares.authCheck, recordsRouter);
+app.use("/reviews", middlewares.authCheck, reviewsRouter);
+app.use("/user", middlewares.authCheck, userRouter);
 app.use("/auth", authRouter);
-app.use("/activities", activityRouter);
+app.use("/activities", middlewares.authCheck, activityRouter);
 
 export default app;
