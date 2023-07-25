@@ -127,9 +127,10 @@ const usersController = {
 
   postFollowing: async (req, res) => {
     try {
-      const { userId = 1 } = req; // TODO: jwt 추가되면 수정 할 것
+      // TODO: jwt 추가되면 수정 할 것
       const {
         body: { targetUserId },
+        user: { userId },
       } = req;
 
       const isUser = await usersProvider.checkUser(targetUserId);
