@@ -23,6 +23,7 @@ const baseResponse = {
   JWT_TOKEN_EMPTY: { status: "FAIL", code: 2013, message: "JWT 토큰이 없습니다." },
   JWT_VERIFICATION_FAILED: { status: "FAIL", code: 2014, message: "JWT 검증에 실패했습니다." },
   IS_NOT_REVIEW_OWNER: { status: "FAIL", code: 2015, message: "리뷰 작성자가 아닙니다." },
+  JWT_EXPIRED: { status: "FAIL", code: 2016, message: "JWT가 만료되었습니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
