@@ -1,7 +1,7 @@
 import baseResponse from "../../config/baseResponeStatus";
 import { response } from "../../config/response";
-import usersProvider from "./usersService";
-import usersService from "./usersProvider";
+import usersService from "./usersService";
+import usersProvider from "./usersProvider";
 import bcrypt from "bcrypt";
 
 const usersController = {
