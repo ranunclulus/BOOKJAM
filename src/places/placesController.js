@@ -9,7 +9,7 @@ const placesController = {
   searchPlaces: async (req, res) => {
     try {
       const {
-        query: { keyword, sortBy = "rating", lat, lon },
+        query: { keyword, sortBy = "rating", lat, lon, last },
       } = req;
 
       if (!keyword) {
@@ -24,7 +24,7 @@ const placesController = {
         return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
       }
 
-      const searchResults = await placesService.searchPlaces(keyword, sortBy, { lat, lon });
+      const searchResults = await placesService.searchPlaces(keyword, sortBy, { lat, lon }, last);
 
       return res.status(200).json(response(baseResponse.SUCCESS, searchResults));
     } catch (error) {
@@ -105,10 +105,10 @@ const placesController = {
 
       const activities = await placesService.retrieveActivitiesByPlaceId(placeId);
 
-      if(activities.error) {
+      if (activities.error) {
         return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
       }
-      return res.status(200).json(response(baseResponse.SUCCESS, activities))
+      return res.status(200).json(response(baseResponse.SUCCESS, activities));
     } catch (error) {
       //console.log(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
@@ -119,11 +119,11 @@ const placesController = {
       const placeId = req.params.placeId;
       const news = await placesService.retrieveNewsByPlaceId(placeId);
 
-      if(news.error) {
-        if(news.cause == "place") {
+      if (news.error) {
+        if (news.cause == "place") {
           return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
         }
-        if(news.cause == "news") {
+        if (news.cause == "news") {
           return res.status(400).json(response(baseResponse.NEWS_NOT_FOUND));
         }
       }
@@ -137,11 +137,11 @@ const placesController = {
       const placeId = req.params.placeId;
       const books = await placesService.retrieveBooksByPlaceId(placeId);
 
-      if(books.error) {
-        if(books.cause == "place") {
+      if (books.error) {
+        if (books.cause == "place") {
           return res.status(400).json(response(baseResponse.LOCATION_EMPTY));
         }
-        if(books.cause == "books") {
+        if (books.cause == "books") {
           return res.status(400).json(response(baseResponse.BOOKS_NOT_FOUND));
         }
       }
@@ -149,7 +149,7 @@ const placesController = {
     } catch (error) {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
-  }
+  },
 };
 
 export default placesController;
