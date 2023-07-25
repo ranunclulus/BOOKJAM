@@ -1,6 +1,4 @@
-import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import pool from "../../config/database";
-import s3 from "../../config/s3";
 import placesDao from "./placesDao";
 
 const getTime = () => {
@@ -26,27 +24,19 @@ const checkOpen = (hours, krCurr) => {
 };
 
 const placesService = {
-  searchPlaces: async (keyword, sortBy, coord) => {
+  searchPlaces: async (keyword, sortBy, coord, last) => {
     const connection = await pool.getConnection();
 
-    let searchResult = await placesDao.selectPlacesByKeyword(keyword, sortBy, coord, connection);
+    let searchResult = await placesDao.selectPlacesByKeyword(keyword, sortBy, coord, last, connection);
 
     const curr = getTime();
 
     searchResult = await Promise.all(
       searchResult.map(async (place) => {
-        const [hours] = await placesDao.selectPlaceHoursByDay(place.placeId, curr.getDay(), connection);
-        const open = checkOpen(hours, curr);
-
-        const imagesRaw = await placesDao.selectPlaceImages(place.placeId, connection);
-        const images = imagesRaw.map(({ image_url }) => image_url);
-
         const { road, jibun, ...rest } = place;
 
         return {
           ...rest,
-          open,
-          images,
           address: {
             road,
             jibun,

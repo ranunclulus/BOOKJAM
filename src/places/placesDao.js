@@ -1,11 +1,10 @@
 const placesDao = {
-  selectPlacesByKeyword: async (keyword, sortBy, coord, connection) => {
+  selectPlacesByKeyword: async (keyword, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
+      select p.place_id "placeId", p.name, p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
       where name like '%${keyword}%' or a.road like '%${keyword}%' or a.jibun like '%${keyword}%'
-      order by 
     `;
 
     let sortColumn;
@@ -21,7 +20,7 @@ const placesDao = {
     const order = sortBy === "distance" ? "asc" : "desc";
 
     if (last) {
-      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where category = ${category} and place_id = ${last})`;
+      sql += ` and ${sortColumn} ${operator} (select ${sortColumn} from places where place_id = ${last})`;
     }
     sql += ` order by ${sortColumn} ${order}`;
     sql += " limit 10";
@@ -156,7 +155,7 @@ const placesDao = {
         SELECT * 
         FROM activities
         WHERE place_id = ?;
-        `
+        `;
 
     const [queryActivities] = await connection.query(sql, placeId);
 
@@ -169,7 +168,7 @@ const placesDao = {
       return records.c;
     } catch (error) {
       console.log(error);
-      return {error: true};
+      return { error: true };
     }
   },
   selectNewsByPlaceId: async (connection, placeId) => {
@@ -181,7 +180,7 @@ const placesDao = {
     const sql = `SELECT * FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
     const [queryResult] = await connection.query(sql);
     return queryResult;
-  }
+  },
 };
 
 export default placesDao;
