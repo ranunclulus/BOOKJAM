@@ -77,6 +77,20 @@ const recordsProvider = {
             return { error:true };
         }
     },
+
+    patchComment: async (commentId, contents) => {
+        try {
+            const connection = await pool.getConnection();
+            const result = await recordsDao.updateComment(connection, commentId, contents);
+            connection.release();
+            if (result.error)
+                return {error: true}
+            return {updated: true};
+        } catch (error) {
+            console.log(error);
+            return { error:true };
+        }
+    },
 }
 
 export default recordsProvider;
