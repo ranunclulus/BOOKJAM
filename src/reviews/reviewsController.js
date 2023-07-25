@@ -23,7 +23,7 @@ const reviewsController = {
 
       const deleteResult = await reviewsService.deleteReview(reviewId);
 
-      return res.status(200).json(response(baseResponse.SUCCESS, deleteResult));
+      return res.status(200).json(response(baseResponse.SUCCESS, { deleted: deleteResult.deleted }));
     } catch (error) {
       console.log(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
