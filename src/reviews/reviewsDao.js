@@ -1,9 +1,10 @@
 const reviewsDao = {
   selectReviewById: async (reviewId, connection) => {
     const sql = `
-      select review_id
+      select review_id, author
       from place_reviews
       where review_id = ${reviewId}
+      limit 1
     `;
 
     const [queryResult] = await connection.query(sql);
@@ -24,7 +25,7 @@ const reviewsDao = {
       await connection.commit();
     } catch (error) {
       await connection.rollback();
-      console.log(error);
+      logger.error(error.message);
     }
   },
   insertReviewImages: async (reviewId, images, connection) => {
@@ -45,6 +46,17 @@ const reviewsDao = {
       console.log(error);
       await connection.rollback();
     }
+  },
+  selectReviewImages: async (reviewId, connection) => {
+    const sql = `
+      select image_url imageUrl
+      from place_review_images
+      where review_id = ${reviewId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
   },
 };
 
