@@ -53,11 +53,10 @@ const placesController = {
   },
   postReview: async (req, res) => {
     try {
-      const { author = 2 } = req; // TODO: jwt 기능 구현되면 수정 할 것
-
       const {
         params: { placeId },
         body: { visitedAt, contents, rating },
+        user: { userId: author },
       } = req;
 
       const review = { author, placeId, visitedAt, contents, rating };
@@ -70,7 +69,7 @@ const placesController = {
 
       return res.status(201).json(response(baseResponse.SUCCESS, { reviewId: result.reviewId }));
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
