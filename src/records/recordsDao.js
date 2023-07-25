@@ -128,6 +128,42 @@ const recordsDao = {
             return {error: true};
         }
     },
+
+    checkOwner: async (connection, userId, commentId) => {
+        const sql = `SELECT count(*) as c FROM comments WHERE user_id = ${userId} and comment_id = ${commentId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    checkComment: async (connection, commentId) => {
+        const sql = `SELECT count(*) as c FROM comments WHERE comment_id = ${commentId}`;
+        try {
+            const [[records]] = await connection.query(sql);
+            return records.c;
+        } catch (error) {
+            console.log(error);
+            return {error: true};
+        }
+    },
+
+    updateComment: async (connection, commentId, contents) => {
+        const sql = `UPDATE comments SET contents = "${contents}", updated_at = NOW(6) WHERE comment_id = ${commentId}`;
+        try {
+            connection.beginTransaction();
+            const [records] = await connection.query(sql);
+            connection.commit();
+            return records;
+        } catch (error) {
+            connection.rollback();
+            console.log(error);
+            return {error: true};
+        }
+    },
 }
 
 export default recordsDao;
