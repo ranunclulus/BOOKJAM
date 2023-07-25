@@ -5,7 +5,7 @@ const authRouter = express.Router();
 
 authRouter.post("/email-check", authController.checkEmailTaken);
 
-authRouter.get("/friends", authController.recommandFriends);
+authRouter.get("/friends", authController.recommendFriends);
 
 authRouter.post("/sign-up", authController.signUp);
 

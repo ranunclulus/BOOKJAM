@@ -12,7 +12,7 @@ const authDao = {
   },
 
   selectThreeRandomUsers: async (connection) => {
-    const sql = "select user_id, name, email, username, profile_image, username from users order by rand() limit 3";
+    const sql = "select user_id, name, email, username, profile_image, username from users where disabled_at IS NULL order by rand() limit 3";
     const [queryResult] = await connection.query(sql);
     return queryResult;
   },
