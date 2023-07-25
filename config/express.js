@@ -6,8 +6,8 @@ import recordsRouter from "../src/records/recordsRouter";
 import placesRouter from "../src/places/placesRouter";
 import reviewsRouter from "../src/reviews/reviewsRouter";
 import authRouter from "../src/auth/authRouter";
-import userRouter from "../src/user/userRouter";
-import activityRouter from "../src/Activity/activityRouter";
+import usersRouter from "../src/users/usersRouter";
+import activitiesRouter from "../src/activities/activitiesRouter";
 import middlewares from "./middlewares";
 
 const app = express();
@@ -22,8 +22,8 @@ app.get("/health", (req, res) => res.status(200).send(response(baseResponse.SUCC
 app.use("/places", middlewares.authCheck, placesRouter);
 app.use("/records", middlewares.authCheck, recordsRouter);
 app.use("/reviews", middlewares.authCheck, reviewsRouter);
-app.use("/user", middlewares.authCheck, userRouter);
+app.use("/users", middlewares.authCheck, usersRouter);
 app.use("/auth", authRouter);
-app.use("/activities", middlewares.authCheck, activityRouter);
+app.use("/activities", middlewares.authCheck, activitiesRouter);
 
 export default app;
