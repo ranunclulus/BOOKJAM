@@ -16,7 +16,7 @@ const authProvider = {
     return true;
   },
 
-  recommandFriends: async () => {
+  recommendFriends: async () => {
     const connection = await pool.getConnection();
 
     const friendsResult = await authDao.selectThreeRandomUsers(connection);
