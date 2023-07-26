@@ -72,7 +72,7 @@ const authController = {
     };
 
     // 토큰 발급
-    const getToken = (userId) =>
+    const signTokenAsync = (userId) =>
         new Promise((resolve, reject) => {
           jwt.sign({
                 userId : userInfoRows.user_id,
@@ -89,15 +89,15 @@ const authController = {
           );
         });
 
-    let accessToken = await getToken(userInfoRows.user_id);
+    const accessToken = await signTokenAsync(userInfoRows.user_id);
 
     result.accessToken = accessToken;
-    let refreshToken = await jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
+    const refreshToken = await jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
     result.refreshToken = refreshToken;
     // refreshToken 저장
     const postRefresh = authProvider.saveRefresh(userInfoRows.user_id, refreshToken);
     if (postRefresh.error) {
-      return res.status(200).json(response(baseResponse.REFRESH_TOKEN_SAVE_ERROR));
+      return res.status(400).json(response(baseResponse.REFRESH_TOKEN_SAVE_ERROR));
     }
 
     return res.status(200).json(response(baseResponse.SUCCESS, result));
