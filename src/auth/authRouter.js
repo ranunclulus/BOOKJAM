@@ -9,4 +9,6 @@ authRouter.get("/friends", authController.recommendFriends);
 
 authRouter.post("/sign-up", authController.signUp);
 
+authRouter.post("/login", authController.login);
+
 export default authRouter;
