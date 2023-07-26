@@ -72,15 +72,24 @@ const authController = {
     };
 
     // 토큰 발급
-    let accessToken = await jwt.sign({
-          userId : userInfoRows.user_id,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "1h",
-          issuer: "bookjam",
-        }
-    );
+    const getToken = (userId) =>
+        new Promise((resolve, reject) => {
+          jwt.sign({
+                userId : userInfoRows.user_id,
+              },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "1h",
+                issuer: "bookjam",
+              },
+              (error, payload) => {
+                if(error) reject(error);
+                resolve(payload);
+              }
+          );
+        });
+
+    let accessToken = await getToken(userInfoRows.user_id);
 
     result.accessToken = accessToken;
     let refreshToken = await jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
