@@ -1,22 +1,22 @@
 import baseResponse from "../../config/baseResponeStatus";
 import { response } from "../../config/response";
-import userService from "./userService";
-import userProvider from "./userProvider";
+import usersProvider from "./usersProvider";
+import usersService from "./usersService";
 import bcrypt from "bcrypt";
 import logger from "../../config/logger";
 
-const userController = {
+const usersController = {
   getRecordsByUserId: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const records = await userService.getRecordsByUserId(userId);
+      const records = await usersProvider.getRecordsByUserId(userId);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
@@ -31,12 +31,12 @@ const userController = {
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const username = req.body.username;
-      const result = await userProvider.patchUsername(userId, username);
+      const result = await usersService.patchUsername(userId, username);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -51,12 +51,12 @@ const userController = {
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const password = await bcrypt.hash(req.body.password, 12);
-      const result = await userProvider.patchPassword(userId, password);
+      const result = await usersService.patchPassword(userId, password);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -71,13 +71,13 @@ const userController = {
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
 
       const profileImg = req.files[0].path;
-      const result = await userProvider.patchProfile(userId, profileImg);
+      const result = await usersService.patchProfile(userId, profileImg);
 
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
@@ -93,11 +93,11 @@ const userController = {
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const result = await userProvider.patchDisabled(userId);
+      const result = await usersService.patchDisabled(userId);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -112,11 +112,11 @@ const userController = {
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
-      const isUser = await userService.checkUser(userId);
+      const isUser = await usersProvider.checkUser(userId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const result = await userService.getMyPage(userId);
+      const result = await usersProvider.getMyPage(userId);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
@@ -132,17 +132,17 @@ const userController = {
         body: { targetUserId },
       } = req;
 
-      const isUser = await userService.checkUser(targetUserId);
+      const isUser = await usersProvider.checkUser(targetUserId);
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
 
-      const alreadyFollowed = await userProvider.checkFollowExists(userId, targetUserId);
+      const alreadyFollowed = await usersService.checkFollowExists(userId, targetUserId);
       if (alreadyFollowed) {
         return res.status(400).json(response(baseResponse.ALREADY_FOLLOWED));
       }
 
-      const result = await userService.addFollower(userId, targetUserId);
+      const result = await usersProvider.addFollower(userId, targetUserId);
       logger.info(`Follow Result: ${result}`);
 
       return res.status(201).json(response(baseResponse.SUCCESS, { following: true }));
@@ -153,4 +153,4 @@ const userController = {
   },
 };
 
-export default userController;
+export default usersController;

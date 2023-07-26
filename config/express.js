@@ -6,7 +6,7 @@ import recordsRouter from "../src/records/recordsRouter";
 import placesRouter from "../src/places/placesRouter";
 import reviewsRouter from "../src/reviews/reviewsRouter";
 import authRouter from "../src/auth/authRouter";
-import userRouter from "../src/user/userRouter";
+import usersRouter from "../src/users/usersRouter";
 import activitiesRouter from "../src/activities/activitiesRouter";
 import middlewares from "./middlewares";
 
@@ -19,11 +19,11 @@ app.use(middlewares.logger);
 
 app.get("/health", (req, res) => res.status(200).send(response(baseResponse.SUCCESS, "Hello World!")));
 
-app.use("/places", placesRouter);
-app.use("/records", recordsRouter);
-app.use("/reviews", reviewsRouter);
-app.use("/user", userRouter);
+app.use("/places", middlewares.authCheck, placesRouter);
+app.use("/records", middlewares.authCheck, recordsRouter);
+app.use("/reviews", middlewares.authCheck, reviewsRouter);
+app.use("/users", middlewares.authCheck, usersRouter);
 app.use("/auth", authRouter);
-app.use("/activities", activitiesRouter);
+app.use("/activities", middlewares.authCheck, activitiesRouter);
 
 export default app;
