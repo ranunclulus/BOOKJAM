@@ -83,7 +83,7 @@ const authController = {
     );
 
     result.accessToken = accessToken;
-    const refreshToken = jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
+    let refreshToken = await jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
     result.refreshToken = refreshToken;
     // refreshToken 저장
     const postRefresh = authProvider.saveRefresh(userInfoRows.user_id, refreshToken);
