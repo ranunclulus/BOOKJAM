@@ -72,6 +72,7 @@ const middlewares = {
       next();
     } catch (error) {
       logger.error(error.message);
+      if (error.name === "TokenExpiredError") return res.status(401).json(baseResponse.JWT_EXPIRED);
       return res.status(401).json(baseResponse.JWT_VERIFICATION_FAILED);
     }
   },
