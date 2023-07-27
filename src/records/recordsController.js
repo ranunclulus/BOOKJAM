@@ -92,8 +92,11 @@ const recordsController = {
   deleteRecordImages: async (req, res) => {
     try {
       const recordId = req.params.recordId;
-      if (!recordId || recordsProvider.checkRecord(recordId).error) return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND));
-      const result = await recordsService.deleteRecordImages(recordId, recordId);
+      const recordImagesId = req.body.recordImagesId;
+      console.log(recordImagesId);
+      const checkRecord = await recordsProvider.checkRecord(recordId);
+      if (!recordId || checkRecord.error) return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND));
+      const result = await recordsService.deleteRecordImages(recordImagesId);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(202).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
