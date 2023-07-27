@@ -1,4 +1,5 @@
 import pool from "../../config/database";
+import logger from "../../config/logger";
 import authDao from "./authDao";
 
 const authProvider = {
@@ -24,6 +25,42 @@ const authProvider = {
     connection.release();
 
     return friendsResult;
+  },
+
+  findUserByEmail: async (email) => {
+    const connection = await pool.getConnection();
+
+    const [user] = await authDao.selectUserByEmail(email, connection);
+
+    return user;
+  },
+
+  checkPassword: async (selectUserPasswordParams) => {
+    const connection = await pool.getConnection();
+
+    const checkResult = await authDao.selectUserPassword(connection, selectUserPasswordParams);
+    if (!checkResult) {
+      return false;
+    }
+
+    return checkResult;
+  },
+
+  saveRefresh: async (userId, refreshToken) => {
+    try {
+      const connection = await pool.getConnection();
+
+      const result = await authDao.updateUserRefreshToken(userId, refreshToken, connection);
+
+      connection.release();
+
+      if (result.error) return { error: true };
+
+      return { error: false, changed: true };
+    } catch (error) {
+      logger.error(error);
+      return { error: true };
+    }
   },
 };
 
