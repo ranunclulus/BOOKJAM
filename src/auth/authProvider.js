@@ -6,7 +6,7 @@ const authProvider = {
   checkEmailTaken: async (email) => {
     const connection = await pool.getConnection();
 
-    const checkResult = await authDao.selectUserByEmail(email, connection);
+    const [checkResult] = await authDao.selectUserByEmail(email, connection);
 
     connection.release();
 
@@ -61,6 +61,16 @@ const authProvider = {
       logger.error(error);
       return { error: true };
     }
+  },
+
+  getRefreshToken: async (userId) => {
+    const connection = await pool.getConnection();
+
+    const [{ refreshToken }] = await authDao.selectRefreshToken(userId, connection);
+
+    connection.release();
+
+    return refreshToken;
   },
 };
 

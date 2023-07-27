@@ -62,6 +62,18 @@ const authDao = {
       return { error: true };
     }
   },
+
+  selectRefreshToken: async (userId, connection) => {
+    const sql = `
+      select refresh_token refreshToken
+      from users
+      where user_id = ${userId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
 };
 
 export default authDao;
