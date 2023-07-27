@@ -115,6 +115,7 @@ const authController = {
       let payload = {};
       try {
         payload = await jwt.verifyTokenAsync(token);
+
         const isTokenOnwer = (await authProvider.getRefreshToken(payload.userId)) === token;
         if (!isTokenOnwer) {
           logger.info(`Refresh Token: ${token} 사용자 ${payload.userId}와(과) 불일치`);
@@ -122,7 +123,7 @@ const authController = {
         }
       } catch (error) {
         if (error.name === "TokenExpiredError") {
-          logger.info(`${token} 기한 만료`);
+          logger.info(`Refresh Token: ${token} 기한 만료`);
           return res.status(401).json(response(baseResponse.REFRESH_TOKEN_EXPIRED));
         }
         logger.info(`${token} 인증 실패`);
