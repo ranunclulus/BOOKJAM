@@ -172,6 +172,25 @@ const usersDao = {
 
     return queryResult;
   },
+
+  deleteUserFollow: async (userId, targetUserId, connection) => {
+    const sql = `
+      delete from follow
+      where follower = ${userId} and followee = ${targetUserId}
+    `;
+
+    try {
+      await connection.beginTransaction();
+
+      const [queryResult] = await connection.query(sql);
+
+      await connection.commit();
+      return queryResult;
+    } catch (error) {
+      logger.error(error.message);
+      await connection.rollback();
+    }
+  },
 };
 
 export default usersDao;

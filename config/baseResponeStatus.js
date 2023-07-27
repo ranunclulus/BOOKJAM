@@ -24,6 +24,7 @@ const baseResponse = {
   JWT_VERIFICATION_FAILED: { status: "FAIL", code: 2014, message: "JWT 검증에 실패했습니다." },
   IS_NOT_REVIEW_OWNER: { status: "FAIL", code: 2015, message: "리뷰 작성자가 아닙니다." },
   JWT_EXPIRED: { status: "FAIL", code: 2016, message: "JWT가 만료되었습니다." },
+  NOT_FOLLOWED: { status: "FAIL", code: 2017, message: "친구로 등록하지 않은 회원입니다." },
 
 
 

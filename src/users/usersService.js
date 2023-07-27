@@ -54,14 +54,24 @@ const usersService = {
     }
   },
 
-  checkFollowExists: async (userId, targetUserId) => {
+  addFollower: async (userId, targetUserId) => {
     const connection = await pool.getConnection();
-    const [alreadyFollowed] = await usersDao.selectUserFollow(userId, targetUserId, connection);
 
-    if (alreadyFollowed) {
-      return true;
-    }
-    return false;
+    const result = await usersDao.insertFollow(userId, targetUserId, connection);
+
+    connection.release();
+
+    return result;
+  },
+
+  deleteFollower: async (userId, targetUserId) => {
+    const connection = await pool.getConnection();
+
+    const result = await usersDao.deleteFollow(userId, targetUserId, connection);
+
+    connection.release();
+
+    return result;
   },
 };
 
