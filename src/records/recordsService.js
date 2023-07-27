@@ -1,5 +1,6 @@
 import pool from "../../config/database";
 import recordsDao from "./recordsDao";
+import {deleteS3Images} from "../../config/s3";
 
 const recordsService = {
     postRecord: async (recordData) => {
@@ -65,15 +66,17 @@ const recordsService = {
         }
     },
 
-    deleteRecordImages: async (recordId) => {
+    deleteRecordImages: async (recordId, recordImagesId) => {
         try {
             const connection = await pool.getConnection();
-            const result = await recordsDao.deleteRecordImages(connection, recordId);
+            const result = await recordsDao.deleteRecordImages(connection, recordId, recordImagesId);
+            const deleteS3 = await s3.deleteS3Images(recordImagesId);
             connection.release();
             if (result.error)
                 return {error: true}
             return {deleted: true};
         } catch (error) {
+            console.log(error);
             return { error:true };
         }
     },
