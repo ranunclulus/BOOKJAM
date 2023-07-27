@@ -25,7 +25,8 @@ const baseResponse = {
   IS_NOT_REVIEW_OWNER: { status: "FAIL", code: 2015, message: "리뷰 작성자가 아닙니다." },
   JWT_EXPIRED: { status: "FAIL", code: 2016, message: "JWT가 만료되었습니다." },
   INVALID_SIGNUP_REQ: { status: "FAIL", code: 2017, message: "올바르지 않은 가입 형식입니다." },
-
+  NOT_FOLLOWED: { status: "FAIL", code: 2017, message: "친구로 등록하지 않은 회원입니다." },
+  
   TOKEN_EMPTY: { status: "FAIL", code: 2030, message: "토큰이 존재하지 않습니다." },
   TOKEN_VERIFICATION_FAILURE: { status: "FAIL", code: 2031, message: "토큰이 일치하지 않습니다." },
   SIGNIN_FAILED: { status: "FAIL", code: 2032, message: "사용자가 없거나 비밀번호가 일치하지 않습니다." },

@@ -127,26 +127,52 @@ const usersController = {
 
   postFollowing: async (req, res) => {
     try {
-      // TODO: jwt 추가되면 수정 할 것
       const {
         body: { targetUserId },
         user: { userId },
       } = req;
 
-      const isUser = await usersProvider.checkUser(targetUserId);
-      if (!isUser) {
+      const userExists = await usersProvider.checkUser(targetUserId);
+      if (!userExists) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
 
-      const alreadyFollowed = await usersService.checkFollowExists(userId, targetUserId);
-      if (alreadyFollowed) {
+      const followed = await usersProvider.checkFollowExists(userId, targetUserId);
+      if (followed) {
         return res.status(400).json(response(baseResponse.ALREADY_FOLLOWED));
       }
 
-      const result = await usersProvider.addFollower(userId, targetUserId);
+      const result = await usersService.addFollower(userId, targetUserId);
       logger.info(`Follow Result: ${result}`);
 
       return res.status(201).json(response(baseResponse.SUCCESS, { following: true }));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
+
+  deleteFollowing: async (req, res) => {
+    try {
+      const {
+        params: { targetUserId },
+        user: { userId },
+      } = req;
+
+      const userExists = await usersProvider.checkUser(targetUserId);
+      if (!userExists) {
+        return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+      }
+
+      const followed = await usersProvider.checkFollowExists(userId, targetUserId);
+      if (!followed) {
+        return res.status(400).json(response(baseResponse.NOT_FOLLOWED));
+      }
+
+      const result = await usersService.addFollower(userId, targetUserId);
+      logger.info(`Unfollow Result: ${JSON.stringify(result)}`);
+
+      return res.status(202).json(response(baseResponse.SUCCESS, { following: false }));
     } catch (error) {
       logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
