@@ -115,8 +115,8 @@ const recordsDao = {
         }
     },
 
-    deleteRecordImages: async (connection, recordId, recordImages) => {
-        const sql = `DELETE FROM record_images where record_id = ${recordId} and image_url in (${recordImages})`;
+    deleteRecordImages: async (connection, recordImagesId) => {
+        const sql = `DELETE FROM record_images where id in (${recordImagesId})`;
         try {
             await connection.beginTransaction();
             const result = await connection.query(sql);
@@ -166,11 +166,12 @@ const recordsDao = {
     },
 
     selectRecordImagesUrl: async (connection, recordImagesId) => {
-        const sql = `SELECT image_url FROM record_images WHERE id = ${recordImagesId}`;
+        const sql = `SELECT image_url FROM record_images WHERE id in (${recordImagesId})`;
         try {
-            const [[imagesUrl]] = await connection.query(sql);
+            const [imagesUrl] = await connection.query(sql);
             return imagesUrl;
         } catch (error) {
+            console.log(error);
             return {error: true};
         }
     },

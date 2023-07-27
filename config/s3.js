@@ -12,7 +12,7 @@ export const deleteS3Images = async (imageUrls) => {
   const command = new DeleteObjectsCommand({
     Bucket: "bookjam-bucket",
     Delete: {
-      Objects: imageUrls.map(({ imageUrl }) => ({ Key: imageUrl.split("https://bookjam-bucket.s3.ap-northeast-2.amazonaws.com/")[1] })),
+      Objects: imageUrls.map(( imageUrl ) => ({ Key: imageUrl.split("https://bookjam-bucket.s3.ap-northeast-2.amazonaws.com/")[1] })),
     },
   });
 
