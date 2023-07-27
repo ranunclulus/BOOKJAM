@@ -108,6 +108,10 @@ const authController = {
     try {
       const token = jwt.extractTokenFromHeader(req);
 
+      if (!token) {
+        return res.status(400).json(response(baseResponse.TOKEN_EMPTY));
+      }
+
       let payload = {};
       try {
         payload = await jwt.verifyTokenAsync(token);
