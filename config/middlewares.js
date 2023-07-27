@@ -4,7 +4,8 @@ import s3 from "./s3";
 import morgan from "morgan";
 import logger from "./logger";
 import baseResponse from "./baseResponeStatus";
-import jwt from "jsonwebtoken";
+import jwt from "./jwt";
+import { response } from "./response";
 require("dotenv").config();
 
 const format = () => {
@@ -34,20 +35,6 @@ const multerS3Uploader = multerS3({
   key: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`),
 });
 
-const extractTokenFromHeader = (req) => {
-  const [type, token] = req.headers.authorization?.split(" ") ?? [];
-
-  return type === "Bearer" ? token : null;
-};
-
-const verifyTokenAsync = (token) =>
-  new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET, (error, payload) => {
-      if (error) reject(error);
-      resolve(payload);
-    });
-  });
-
 const middlewares = {
   s3Upload: multer({
     dest: "uploads/images/",
@@ -60,20 +47,20 @@ const middlewares = {
   logger: morgan(format(), { stream, skip }),
 
   authCheck: async (req, res, next) => {
-    const token = extractTokenFromHeader(req);
+    const token = jwt.extractTokenFromHeader(req);
 
     if (!token) {
       return res.status(401).json(baseResponse.JWT_TOKEN_EMPTY);
     }
 
     try {
-      const payload = await verifyTokenAsync(token);
+      const payload = await jwt.verifyTokenAsync(token);
       req.user = payload;
       next();
     } catch (error) {
       logger.error(error.message);
-      if (error.name === "TokenExpiredError") return res.status(401).json(baseResponse.JWT_EXPIRED);
-      return res.status(401).json(baseResponse.JWT_VERIFICATION_FAILED);
+      if (error.name === "TokenExpiredError") return res.status(401).json(baseResponse.ACCESS_TOKEN_EXPIRED);
+      return res.status(401).json(response(baseResponse.JWT_VERIFICATION_FAILED));
     }
   },
 };
