@@ -1,4 +1,5 @@
 import pool from "../../config/database";
+import logger from "../../config/logger";
 import authDao from "./authDao";
 
 const authProvider = {
@@ -26,16 +27,12 @@ const authProvider = {
     return friendsResult;
   },
 
-  findByEmail: async (email) => {
+  findUserByEmail: async (email) => {
     const connection = await pool.getConnection();
 
-    const checkResult = await authDao.selectUserInfoByEmail(email, connection);
+    const [user] = await authDao.selectUserByEmail(email, connection);
 
-    if (!checkResult) {
-      return false;
-    }
-
-    return checkResult;
+    return user;
   },
 
   checkPassword: async (selectUserPasswordParams) => {
@@ -49,28 +46,22 @@ const authProvider = {
     return checkResult;
   },
 
-  accountCheck: async (email) => {
-    const connection = await pool.getConnection();
-    const checkResult = await authDao.selectUserAllInfoByEmail(email, connection);
-    if (!checkResult) {
-      return false;
-    }
-    return checkResult;
-  },
-
   saveRefresh: async (userId, refreshToken) => {
     try {
       const connection = await pool.getConnection();
+
       const result = await authDao.updateUserRefreshToken(userId, refreshToken, connection);
-      connection.release()
-      if (result.error)
-        return {error: true}
-      return {changed: true};
+
+      connection.release();
+
+      if (result.error) return { error: true };
+
+      return { error: false, changed: true };
     } catch (error) {
-      console.error(error);
-      return {error: true}
+      logger.error(error);
+      return { error: true };
     }
-  }
+  },
 };
 
 export default authProvider;

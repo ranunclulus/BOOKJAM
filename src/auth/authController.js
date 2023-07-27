@@ -3,13 +3,30 @@ import { response } from "../../config/response";
 import authProvider from "./authProvider";
 import bcrypt from "bcrypt";
 import authService from "./authService";
-const jwt = require('jsonwebtoken');
+import logger from "../../config/logger";
+import jwt from "jsonwebtoken";
 
 const validateEmail = (email) => {
   const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$");
 
   return emailRegex.test(email);
 };
+
+const validatePassword = (password) => {
+  const passwordRegex = new RegExp(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#%^&*()_+\-=\[\]{}|;':",./<>?~`\\])[A-Za-z\d!@#%^&*()_+\-=\[\]{}|;':",./<>?~`\\]{9,16}/
+  ); // 영대문자, 영소문자, 특수문자, 숫자 1개 이상 씩 포함하여 9자 이상 16자 이하
+
+  return passwordRegex.test(password);
+};
+
+const signTokenAsync = (payload, options) =>
+  new Promise((resolve, reject) => {
+    jwt.sign(payload, process.env.JWT_SECRET, options, (error, payload) => {
+      if (error) reject(error);
+      resolve(payload);
+    });
+  });
 
 const authController = {
   checkEmailTaken: async (req, res) => {
@@ -26,83 +43,74 @@ const authController = {
 
   recommendFriends: async (req, res) => {
     const friendsResult = await authProvider.recommendFriends();
-    return res.status(200).json(response(baseResponse.SUCCESS, {recommendFriends: friendsResult}));
+    return res.status(200).json(response(baseResponse.SUCCESS, { recommendFriends: friendsResult }));
   },
 
   signUp: async (req, res) => {
-    const { kakao, email, password, username } = req.body;
+    try {
+      const {
+        body: { kakao, email, password, username },
+      } = req;
 
-    // 이미 가입된 아이디인지 검사 -> 이미 이메일 검증에서 완료함
-    const hashed = await bcrypt.hash(password, 12);
-    const newUser = await authService.createNewUser({
-      kakao,
-      email,
-      password: hashed,
-      username
-    });
-    return res.status(200).json(baseResponse.SUCCESS);
+      if (!validateEmail(email) || !validatePassword(password) || !kakao || !username || (await authProvider.checkEmailTaken(email))) {
+        return res.status(400).json(response(baseResponse.INVALID_SIGNUP_REQ));
+      }
+
+      const hashedPassoword = await bcrypt.hash(password, 12);
+      const newUserId = await authService.createNewUser({
+        kakao,
+        email,
+        password: hashedPassoword,
+        username,
+      });
+
+      return res.status(200).json(response(baseResponse.SUCCESS, { userId: newUserId }));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
   },
 
   login: async (req, res) => {
-    const {email, password} = req.body;
-    // 이메일 체크
-    const userInfo = await authProvider.findByEmail(email);
+    try {
+      const {
+        body: { email, password },
+      } = req;
 
-    if (!userInfo.email) {
-      return res.status(400).json(response(baseResponse.SIGNIN_EMAIL_WRONG));
+      const user = await authProvider.findUserByEmail(email);
+
+      if (!user) {
+        return res.status(400).json(response(baseResponse.SIGNIN_FAILED));
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password);
+
+      if (!isValidPassword) {
+        return res.status(400).json(response(baseResponse.SIGNIN_FAILED));
+      }
+
+      // 비활성화 계정이라면
+      if (user.disabled_at !== null) {
+        return res.status(400).json(response(baseResponse.SIGNIN_INACTIVE_ACCOUNT));
+      }
+
+      const accessToken = await signTokenAsync({ userId: user.userId }, { expiresIn: "1h", issuer: "bookjam" });
+      const refreshToken = await signTokenAsync({}, { expiresIn: "14d", issuer: "bookjam" });
+
+      const saveResult = authProvider.saveRefresh(user.userId, refreshToken);
+
+      if (saveResult.error) {
+        return res.status(500).json(response(baseResponse.REFRESH_TOKEN_SAVE_ERROR));
+      }
+
+      const result = { accessToken, refreshToken };
+
+      return res.status(200).json(response(baseResponse.SUCCESS, result));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
-
-    const isValidPassword = await bcrypt.compare(password, userInfo.password);
-
-    if (!isValidPassword) {
-      return res.status(400).json(response(baseResponse.SIGNIN_PASSWORD_WRONG));
-    }
-
-    // 이제 유저 정보 받아오기
-    const userInfoRows = await authProvider.accountCheck(email);
-
-    // 비활성화 계정이라면
-    if (userInfo.disabled_at !== null) {
-      return res.status(400).json(response(baseResponse.SIGNIN_INACTIVE_ACCOUNT));
-    }
-
-    const result = {
-      user_id: userInfoRows.user_id,
-      email: userInfoRows.email
-    };
-
-    // 토큰 발급
-    const signTokenAsync = (userId) =>
-        new Promise((resolve, reject) => {
-          jwt.sign({
-                userId : userInfoRows.user_id,
-              },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "1h",
-                issuer: "bookjam",
-              },
-              (error, payload) => {
-                if(error) reject(error);
-                resolve(payload);
-              }
-          );
-        });
-
-    const accessToken = await signTokenAsync(userInfoRows.user_id);
-
-    result.accessToken = accessToken;
-    const refreshToken = await jwt.sign({}, process.env.JWT_SECRET, {expiresIn: "14d"});
-    result.refreshToken = refreshToken;
-    // refreshToken 저장
-    const postRefresh = authProvider.saveRefresh(userInfoRows.user_id, refreshToken);
-    if (postRefresh.error) {
-      return res.status(400).json(response(baseResponse.REFRESH_TOKEN_SAVE_ERROR));
-    }
-
-    return res.status(200).json(response(baseResponse.SUCCESS, result));
-  }
-
+  },
 };
 
 export default authController;

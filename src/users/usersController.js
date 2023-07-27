@@ -76,13 +76,13 @@ const usersController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
 
-      const profileImg = req.files[0].path;
+      const profileImg = req.file.location;
       const result = await usersService.patchProfile(userId, profileImg);
 
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },

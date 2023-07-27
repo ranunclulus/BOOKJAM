@@ -1,19 +1,21 @@
 import pool from "../../config/database";
 import authDao from "./authDao";
+import logger from "../../config/logger";
 
 const authService = {
-    createNewUser: async (user) => {
-        try {
-            const connection = await pool.getConnection();
-            const newUser = authDao.insertUser(connection, user);
-            if (!newUser) {
-                return { error:true };
-            }
-            return newUser;
-        } catch (error) {
-            return {error:true};
-        }
+  createNewUser: async (user) => {
+    try {
+      const connection = await pool.getConnection();
+      const newUserId = await authDao.insertUser(connection, user);
+      if (!newUserId) {
+        return { error: false };
+      }
+      return newUserId;
+    } catch (error) {
+      logger.error(error.message);
+      return { error: true };
     }
-}
+  },
+};
 
 export default authService;
