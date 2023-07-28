@@ -1,4 +1,5 @@
 import pool from "../../config/database";
+import jwt from "../../config/jwt";
 import logger from "../../config/logger";
 import authDao from "./authDao";
 
@@ -63,14 +64,28 @@ const authProvider = {
     }
   },
 
-  getRefreshToken: async (userId) => {
+  validateRefreshToken: async (token) => {
     const connection = await pool.getConnection();
 
-    const [{ refreshToken }] = await authDao.selectRefreshToken(userId, connection);
+    try {
+      const { userId } = await jwt.verifyTokenAsync(token);
+
+      const isTokenOnwer = (await authDao.selectRefreshToken(userId, connection)) === token;
+      if (!isTokenOnwer) {
+        logger.info(`Refresh Token: ${token} 사용자 ${userId}와(과) 불일치`);
+        return { result: false, name: "NotOwnerError" };
+      }
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        logger.info(`Refresh Token: ${token} 기한 만료`);
+        return { result: false, name: error.name };
+      }
+      logger.info(`${token} 인증 실패`);
+      return { result: false, name: "VerificationError" };
+    }
 
     connection.release();
-
-    return refreshToken;
+    return { result: true };
   },
 };
 

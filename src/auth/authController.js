@@ -112,21 +112,10 @@ const authController = {
         return res.status(400).json(response(baseResponse.TOKEN_EMPTY));
       }
 
-      let payload = {};
-      try {
-        payload = await jwt.verifyTokenAsync(token);
+      const isTokenValid = await authProvider.validateRefreshToken(token);
 
-        const isTokenOnwer = (await authProvider.getRefreshToken(payload.userId)) === token;
-        if (!isTokenOnwer) {
-          logger.info(`Refresh Token: ${token} 사용자 ${payload.userId}와(과) 불일치`);
-          return res.status(401).json(response(baseResponse.JWT_VERIFICATION_FAILED));
-        }
-      } catch (error) {
-        if (error.name === "TokenExpiredError") {
-          logger.info(`Refresh Token: ${token} 기한 만료`);
-          return res.status(401).json(response(baseResponse.REFRESH_TOKEN_EXPIRED));
-        }
-        logger.info(`${token} 인증 실패`);
+      if (!isTokenValid.result) {
+        if (isTokenValid.name === "TokenExipredError") return res.status(401).json(response(baseResponse.REFRESH_TOKEN_EXPIRED));
         return res.status(401).json(response(baseResponse.JWT_VERIFICATION_FAILED));
       }
 
