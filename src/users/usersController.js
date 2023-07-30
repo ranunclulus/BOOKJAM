@@ -8,7 +8,7 @@ import logger from "../../config/logger";
 const usersController = {
   getRecordsByUserId: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -16,7 +16,9 @@ const usersController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const records = await usersProvider.getRecordsByUserId(userId);
+      const lastId = req.query.lastId;
+      const category = req.query.category;
+      const records = await usersProvider.getRecordsByUserId(userId, lastId, category);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
@@ -27,7 +29,7 @@ const usersController = {
 
   patchUsername: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -47,7 +49,7 @@ const usersController = {
 
   patchPassword: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -67,7 +69,7 @@ const usersController = {
 
   patchProfile: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -89,7 +91,7 @@ const usersController = {
 
   patchDisabled: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -108,7 +110,7 @@ const usersController = {
 
   getMyPage: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -178,6 +180,47 @@ const usersController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+
+  getMyReviews: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      if (!userId) {
+        return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
+      }
+      const isUser = await usersProvider.checkUser(userId);
+      if (!isUser) {
+        return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+      }
+      const lastId = req.query.lastId;
+      const records = await usersProvider.getMyReviews(userId, lastId);
+      if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
+      return res.status(200).json(response(baseResponse.SUCCESS, records));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
+
+  getMyActivities: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      if (!userId) {
+        return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
+      }
+      const isUser = await usersProvider.checkUser(userId);
+      if (!isUser) {
+        return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
+      }
+      const lastId = req.query.lastId;
+      const records = await usersProvider.getMyActivities(userId, lastId);
+      if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
+      return res.status(200).json(response(baseResponse.SUCCESS, records));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
+
 };
 
 export default usersController;

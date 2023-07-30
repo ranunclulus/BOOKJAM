@@ -1,15 +1,22 @@
 import logger from "../../config/logger";
 
 const usersDao = {
-  selectRecordsByUserId: async (connection, userId) => {
+  selectRecordsByUserId: async (connection, userId, lastId, category) => {
     const sql = `SELECT cr.record_id, cr.author, cr.created_at, cr.status, cr.date, cr.place_id, places.name, places.category, cr.isbn, cr.activities, cr.emotions, cr.contents, cr.isNotPublic, cr.comment_not_allowed, cr.comment_count, cr.like_count, cr.images_url
         FROM (SELECT *, (SELECT GROUP_CONCAT(image_url separator '|') FROM record_images WHERE records.record_id = record_images.record_id) as images_url FROM records WHERE author = ${userId}) AS cr 
-        JOIN (SELECT place_id, category, name FROM places) AS places
-        ON cr.place_id = places.place_id
-        ORDER BY cr.created_at DESC`;
+        JOIN (SELECT place_id, category, name FROM places WHERE category = ${category}) AS places
+        ON cr.place_id = places.place_id`;
+    const last = ` WHERE cr.created_at < (select created_at FROM records WHERE record_id = ${lastId})`;
+    const order = ` ORDER BY cr.created_at DESC LIMIT 5`;
     try {
-      const [records] = await connection.query(sql);
-      return records;
+      if (lastId){
+        const [records] = await connection.query(sql + last + order);
+        return records;
+      }
+      else{
+        const [records] = await connection.query(sql + order);
+        return records
+      }
     } catch (error) {
       console.log(error);
       return { error: true };
@@ -90,52 +97,46 @@ const usersDao = {
     }
   },
 
-  selectMypageActivities: async (connection, userId) => {
+  selectMyActivities: async (connection, userId, lastId) => {
     const sql = `SELECT ar.activity_id, a.title, a.total_rating, a.review_count, a.image_url FROM activity_reservations as ar
-        JOIN activities as a
+        JOIN activities as a 
         ON ar.activity_id = a.activity_id
-        order by a.created_at desc
-        LIMIT 5`;
+        WHERE ar.user_id = ${userId}`
+    const last = ` AND ar.created_at < (select created_at from activitity_reservations where activity_id = ${lastId})`
+    const order = ` order by a.created_at desc LIMIT 5`;
     try {
-      const [result] = await connection.query(sql);
-      return result;
+      if (lastId){
+        const [result] = await connection.query(sql + last + order);
+        return result;
+      }
+      else{
+        const [result] = await connection.query(sql + order);
+        return result;
+      }
     } catch (error) {
       console.log(error);
       return { error: true };
     }
   },
 
-  selectMypageRecords: async (connection, userId) => {
-    const sql = `SELECT r.record_id, r.date, r.comment_count, r.like_count, p.name, ri.image_url FROM (select * from records WHERE author = 1) as r
-        JOIN (select * from places where category = ?) as p
-        ON r.place_id = p.place_id
-        LEFT JOIN (select * from record_images group by record_id) as ri
-        ON r.record_id = ri.record_id
-        ORDER BY r.created_at desc
-        limit 5`;
-    try {
-      const [bookStore] = await connection.query(sql, 1);
-      const [playground] = await connection.query(sql, 2);
-      const [library] = await connection.query(sql, 3);
-      return { bookStore: bookStore, playground: playground, library: library };
-    } catch (error) {
-      console.log(error);
-      return { error: true };
-    }
-  },
-
-  selectMypageReviews: async (connection, userId) => {
+  selectMyReviews: async (connection, userId, lastId) => {
     const sql = `SELECT r.review_id, r.visited_at, p.name, p.category, ri.image_url
         FROM (select * from place_reviews WHERE author = ${userId}) as r
         JOIN places as p
         ON r.place_id = p.place_id
         LEFT JOIN (select * from place_review_images group by review_id) as ri
-        ON r.review_id = ri.review_id
-        ORDER BY r.created_at desc
-        limit 5`;
+        ON r.review_id = ri.review_id`;
+    const last = ` Where r.created_at < (select created_at From place_reviews where activity_id = ${lastId})`;
+    const order = ` ORDER BY r.created_at desc limit 5`;
     try {
-      const [result] = await connection.query(sql);
-      return result;
+      if (lastId){
+        const [result] = await connection.query(sql + last + order);
+        return result;
+      }
+      else{
+        const [result] = await connection.query(sql + order);
+        return result;
+      }
     } catch (error) {
       console.log(error);
       return { error: true };

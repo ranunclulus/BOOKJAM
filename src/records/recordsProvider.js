@@ -1,10 +1,10 @@
 import pool from "../../config/database";
 import recordsDao from "./recordsDao";
 const recordsProvider = {
-  getRecordsByUserId: async (userId, friendId) => {
+  getRecordsByUserId: async (userId, friendId, lastId) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await recordsDao.selectRecordsByFriendId(connection, userId, friendId);
+      const recordsResult = await recordsDao.selectRecordsByFriendId(connection, userId, friendId, lastId);
       connection.release();
       if (recordsResult.error) return { error: true };
 

@@ -2,10 +2,10 @@ import pool from "../../config/database";
 import usersDao from "./usersDao";
 
 const usersProvider = {
-  getRecordsByUserId: async (userId) => {
+  getRecordsByUserId: async (userId, lastId, category) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId);
+      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId, lastId, category);
       connection.release();
       if (recordsResult.error) return { error: true };
 
@@ -35,12 +35,9 @@ const usersProvider = {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
       const userOutline = await usersDao.selectMypageUserOutline(connection, userId);
-      const activities = await usersDao.selectMypageActivities(connection, userId);
-      const records = await usersDao.selectMypageRecords(connection, userId);
-      const reviews = await usersDao.selectMypageReviews(connection, userId);
       connection.release();
-      if (userOutline.error || activities.error || records.error || reviews.error) return { error: true };
-      return { userOutline: userOutline, activities: activities, records: records, reviews: reviews };
+      if (userOutline.error) return { error: true };
+      return { userOutline: userOutline };
     } catch (error) {
       console.error(error);
       return { error: true };
@@ -56,6 +53,33 @@ const usersProvider = {
     }
     return false;
   },
+
+  getMyReviews: async (userId, lastId) => {
+    try {
+      const connection = await pool.getConnection(async (conn) => conn);
+      const userReviews = await usersDao.selectMyReviews(connection, userId, lastId);
+      connection.release();
+      if (userReviews.error) return { error: true };
+      return { userReviews: userReviews };
+    } catch (error) {
+      console.error(error);
+      return { error: true };
+    }
+  },
+
+  getMyActivities: async (userId, lastId) => {
+    try {
+      const connection = await pool.getConnection(async (conn) => conn);
+      const userActivities = await usersDao.selectMyActivities(connection, userId, lastId);
+      connection.release();
+      if (userActivities.error) return { error: true };
+      return { userActivities: userActivities };
+    } catch (error) {
+      console.error(error);
+      return { error: true };
+    }
+  },
+
 };
 
 export default usersProvider;

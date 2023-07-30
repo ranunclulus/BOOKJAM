@@ -6,7 +6,8 @@ import recordsService from "./recordsService";
 const recordsController = {
   postRecord: async (req, res) => {
     try {
-      const { userId, place, isbn, date, emotions, activity, contents, isNotPublic, commentNotAllowed } = req.body;
+      const userId = req.user.userId;
+      const { place, isbn, date, emotions, activity, contents, isNotPublic, commentNotAllowed } = req.body;
       const chkUser = await recordsProvider.checkUser(userId);
       if (!chkUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
@@ -23,7 +24,7 @@ const recordsController = {
 
   getFriendsRecords: async (req, res) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.user.userId;
       if (!userId) {
         return res.status(400).json(response(baseResponse.RECORDS_USERID_READ_FAIL));
       }
@@ -32,6 +33,7 @@ const recordsController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const friendId = req.query.friendId;
+      const lastId = req.query.lastId;
       if (friendId) {
         const chkUser = await recordsProvider.checkUser(friendId);
         if (!chkUser) {
@@ -41,7 +43,7 @@ const recordsController = {
           if (!chkFollow) {
             return res.status(400).json(response(baseResponse.NOT_FRIEND));
           } else {
-            const records = await recordsProvider.getRecordsByUserId(userId, friendId);
+            const records = await recordsProvider.getRecordsByUserId(userId, friendId, lastId);
             if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, records));
           }
@@ -108,7 +110,7 @@ const recordsController = {
   patchComment: async (req, res) => {
     try {
       const commentId = req.params.commentId;
-      const userId = req.body.userId;
+      const userId = req.user.userId;
       const contents = req.body.contents;
       if (!commentId || (await recordsProvider.checkComment(commentId).error) === true)
         return res.status(404).json(response(baseResponse.COMMENT_NOT_FOUND));
