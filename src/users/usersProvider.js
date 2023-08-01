@@ -1,5 +1,6 @@
 import pool from "../../config/database";
 import usersDao from "./usersDao";
+import logger from "../../config/logger";
 
 const usersProvider = {
   getRecordsByUserId: async (userId, last, category) => {
@@ -26,7 +27,7 @@ const usersProvider = {
       if (chk.error) return 0;
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return 0;
     }
   },
@@ -39,7 +40,7 @@ const usersProvider = {
       if (userOutline.error) return { error: true };
       return { userOutline: userOutline };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -62,7 +63,7 @@ const usersProvider = {
       if (userReviews.error) return { error: true };
       return { userReviews: userReviews };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -75,7 +76,7 @@ const usersProvider = {
       if (userActivities.error) return { error: true };
       return { userActivities: userActivities };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },

@@ -1,5 +1,6 @@
 import pool from "../../config/database";
 import recordsDao from "./recordsDao";
+import logger from "../../config/logger";
 const recordsProvider = {
   getRecordsByUserId: async (userId, friendId, last) => {
     try {
@@ -13,7 +14,7 @@ const recordsProvider = {
       }
       return recordsResult;
     } catch (err) {
-      console.error(err);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -29,7 +30,7 @@ const recordsProvider = {
       }
       return recordsResult;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -42,7 +43,7 @@ const recordsProvider = {
       if (chk.error) return { error: true };
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -58,7 +59,7 @@ const recordsProvider = {
       }
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -71,7 +72,7 @@ const recordsProvider = {
       if (result.error) return { error: true };
       return result;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -84,7 +85,7 @@ const recordsProvider = {
       if (result.error) return { error: true };
       return result;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -98,7 +99,7 @@ const recordsProvider = {
       if (result === 0) return { owner : false};
       return { owner : true };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },

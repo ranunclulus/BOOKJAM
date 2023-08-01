@@ -22,7 +22,7 @@ const usersController = {
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -42,7 +42,7 @@ const usersController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -62,7 +62,7 @@ const usersController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -103,7 +103,7 @@ const usersController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -122,7 +122,7 @@ const usersController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -196,7 +196,7 @@ const usersController = {
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -216,7 +216,7 @@ const usersController = {
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },

@@ -18,7 +18,7 @@ const usersDao = {
         return records
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -29,7 +29,7 @@ const usersDao = {
       const [[records]] = await connection.query(sql);
       return records.c;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -41,7 +41,7 @@ const usersDao = {
       console.log(result);
       return result;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -52,7 +52,7 @@ const usersDao = {
       const [result] = await connection.query(sql);
       return result;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -63,7 +63,7 @@ const usersDao = {
       const [result] = await connection.query(sql);
       return result;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -74,7 +74,7 @@ const usersDao = {
       const [result] = await connection.query(sql);
       return result;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -92,7 +92,7 @@ const usersDao = {
       const [result] = await connection.query(sql);
       return result;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -114,7 +114,7 @@ const usersDao = {
         return result;
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -138,7 +138,7 @@ const usersDao = {
         return result;
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message);
       return { error: true };
     }
   },

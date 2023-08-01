@@ -2,6 +2,7 @@ import baseResponse from "../../config/baseResponeStatus";
 import { response } from "../../config/response";
 import recordsProvider from "./recordsProvider";
 import recordsService from "./recordsService";
+import logger from "../../config/logger";
 
 const recordsController = {
   postRecord: async (req, res) => {
@@ -17,7 +18,7 @@ const recordsController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(201).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -54,7 +55,7 @@ const recordsController = {
         return res.status(200).json(response(baseResponse.SUCCESS, records));
       }
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -72,7 +73,7 @@ const recordsController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(201).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -86,7 +87,7 @@ const recordsController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(202).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -95,14 +96,13 @@ const recordsController = {
     try {
       const recordId = req.params.recordId;
       const recordImagesId = req.body.recordImagesId;
-      console.log(recordImagesId);
       const checkRecord = await recordsProvider.checkRecord(recordId);
       if (!recordId || checkRecord.error) return res.status(404).json(response(baseResponse.RECORDID_NOT_FOUND));
       const result = await recordsService.deleteRecordImages(recordImagesId);
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(202).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
@@ -129,7 +129,7 @@ const recordsController = {
       if (result.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(202).json(response(baseResponse.SUCCESS, result));
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },

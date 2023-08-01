@@ -19,7 +19,7 @@ const recordsDao = {
                 return records
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -33,7 +33,7 @@ const recordsDao = {
             return record_results;
         } catch (error) {
             await connection.rollback();
-            console.error(error);
+            logger.error(error.message);
             return {error: true};
         }
         
@@ -60,7 +60,7 @@ const recordsDao = {
                 return records
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -71,7 +71,7 @@ const recordsDao = {
             const [[records]] = await connection.query(sql);
             return records.c;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -82,7 +82,7 @@ const recordsDao = {
             const [[records]] = await connection.query(sql);
             return records.c;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -93,7 +93,7 @@ const recordsDao = {
             const [[records]] = await connection.query(sql);
             return records.c;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -109,7 +109,7 @@ const recordsDao = {
             return {recorded: true};
         } catch (error) {
             await connection.rollback();
-            console.error(error);
+            logger.error(error.message);
             return {error: true};
         }
         
@@ -124,7 +124,7 @@ const recordsDao = {
             return result;
         } catch (error) {
             await connection.rollback();
-            console.error(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -138,7 +138,7 @@ const recordsDao = {
             return result;
         } catch (error) {
             await connection.rollback();
-            console.error(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -149,7 +149,7 @@ const recordsDao = {
             const [[records]] = await connection.query(sql);
             return records.c;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -160,7 +160,7 @@ const recordsDao = {
             const [[records]] = await connection.query(sql);
             return records.c;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -174,7 +174,7 @@ const recordsDao = {
             return records;
         } catch (error) {
             connection.rollback();
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
@@ -185,7 +185,7 @@ const recordsDao = {
             const [imagesUrl] = await connection.query(sql);
             return imagesUrl;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message);
             return {error: true};
         }
     },
