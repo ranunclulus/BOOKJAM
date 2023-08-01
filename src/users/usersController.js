@@ -16,9 +16,9 @@ const usersController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const lastId = req.query.lastId;
+      const last = req.query.lastId;
       const category = req.query.category;
-      const records = await usersProvider.getRecordsByUserId(userId, lastId, category);
+      const records = await usersProvider.getRecordsByUserId(userId, last, category);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
@@ -191,8 +191,8 @@ const usersController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const lastId = req.query.lastId;
-      const records = await usersProvider.getMyReviews(userId, lastId);
+      const last = req.query.lastId;
+      const records = await usersProvider.getMyReviews(userId, last);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {
@@ -211,8 +211,8 @@ const usersController = {
       if (!isUser) {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
-      const lastId = req.query.lastId;
-      const records = await usersProvider.getMyActivities(userId, lastId);
+      const last = req.query.lastId;
+      const records = await usersProvider.getMyActivities(userId, last);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
     } catch (error) {

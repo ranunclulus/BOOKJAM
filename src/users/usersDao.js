@@ -1,16 +1,16 @@
 import logger from "../../config/logger";
 
 const usersDao = {
-  selectRecordsByUserId: async (connection, userId, lastId, category) => {
+  selectRecordsByUserId: async (connection, userId, last, category) => {
     const sql = `SELECT cr.record_id, cr.author, cr.created_at, cr.status, cr.date, cr.place_id, places.name, places.category, cr.isbn, cr.activities, cr.emotions, cr.contents, cr.isNotPublic, cr.comment_not_allowed, cr.comment_count, cr.like_count, cr.images_url
         FROM (SELECT *, (SELECT GROUP_CONCAT(image_url separator '|') FROM record_images WHERE records.record_id = record_images.record_id) as images_url FROM records WHERE author = ${userId}) AS cr 
         JOIN (SELECT place_id, category, name FROM places WHERE category = ${category}) AS places
         ON cr.place_id = places.place_id`;
-    const last = ` WHERE cr.created_at < (select created_at FROM records WHERE record_id = ${lastId})`;
+    const lastq = ` WHERE cr.created_at < (select created_at FROM records WHERE record_id = ${last})`;
     const order = ` ORDER BY cr.created_at DESC LIMIT 5`;
     try {
-      if (lastId){
-        const [records] = await connection.query(sql + last + order);
+      if (last){
+        const [records] = await connection.query(sql + lastq + order);
         return records;
       }
       else{
@@ -97,16 +97,16 @@ const usersDao = {
     }
   },
 
-  selectMyActivities: async (connection, userId, lastId) => {
+  selectMyActivities: async (connection, userId, last) => {
     const sql = `SELECT ar.activity_id, a.title, a.total_rating, a.review_count, a.image_url FROM activity_reservations as ar
         JOIN activities as a 
         ON ar.activity_id = a.activity_id
         WHERE ar.user_id = ${userId}`
-    const last = ` AND ar.created_at < (select created_at from activitity_reservations where activity_id = ${lastId})`
+    const lastq = ` AND ar.created_at < (select created_at from activitity_reservations where activity_id = ${last})`
     const order = ` order by a.created_at desc LIMIT 5`;
     try {
-      if (lastId){
-        const [result] = await connection.query(sql + last + order);
+      if (last){
+        const [result] = await connection.query(sql + lastq + order);
         return result;
       }
       else{
@@ -119,18 +119,18 @@ const usersDao = {
     }
   },
 
-  selectMyReviews: async (connection, userId, lastId) => {
+  selectMyReviews: async (connection, userId, last) => {
     const sql = `SELECT r.review_id, r.visited_at, p.name, p.category, ri.image_url
         FROM (select * from place_reviews WHERE author = ${userId}) as r
         JOIN places as p
         ON r.place_id = p.place_id
         LEFT JOIN (select * from place_review_images group by review_id) as ri
         ON r.review_id = ri.review_id`;
-    const last = ` Where r.created_at < (select created_at From place_reviews where activity_id = ${lastId})`;
+    const lastq = ` Where r.created_at < (select created_at From place_reviews where activity_id = ${last})`;
     const order = ` ORDER BY r.created_at desc limit 5`;
     try {
-      if (lastId){
-        const [result] = await connection.query(sql + last + order);
+      if (last){
+        const [result] = await connection.query(sql + lastq + order);
         return result;
       }
       else{

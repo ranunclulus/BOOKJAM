@@ -2,10 +2,10 @@ import pool from "../../config/database";
 import usersDao from "./usersDao";
 
 const usersProvider = {
-  getRecordsByUserId: async (userId, lastId, category) => {
+  getRecordsByUserId: async (userId, last, category) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId, lastId, category);
+      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId, last, category);
       connection.release();
       if (recordsResult.error) return { error: true };
 
@@ -54,10 +54,10 @@ const usersProvider = {
     return false;
   },
 
-  getMyReviews: async (userId, lastId) => {
+  getMyReviews: async (userId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const userReviews = await usersDao.selectMyReviews(connection, userId, lastId);
+      const userReviews = await usersDao.selectMyReviews(connection, userId, last);
       connection.release();
       if (userReviews.error) return { error: true };
       return { userReviews: userReviews };
@@ -67,10 +67,10 @@ const usersProvider = {
     }
   },
 
-  getMyActivities: async (userId, lastId) => {
+  getMyActivities: async (userId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const userActivities = await usersDao.selectMyActivities(connection, userId, lastId);
+      const userActivities = await usersDao.selectMyActivities(connection, userId, last);
       connection.release();
       if (userActivities.error) return { error: true };
       return { userActivities: userActivities };

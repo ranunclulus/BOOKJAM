@@ -33,7 +33,7 @@ const recordsController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const friendId = req.query.friendId;
-      const lastId = req.query.lastId;
+      const last = req.query.lastId;
       if (friendId) {
         const chkUser = await recordsProvider.checkUser(friendId);
         if (!chkUser) {
@@ -43,13 +43,13 @@ const recordsController = {
           if (!chkFollow) {
             return res.status(400).json(response(baseResponse.NOT_FRIEND));
           } else {
-            const records = await recordsProvider.getRecordsByUserId(userId, friendId, lastId);
+            const records = await recordsProvider.getRecordsByUserId(userId, friendId, last);
             if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
             return res.status(200).json(response(baseResponse.SUCCESS, records));
           }
         }
       } else {
-        const records = await recordsProvider.getRecordsAll(userId);
+        const records = await recordsProvider.getRecordsAll(userId, last);
         if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
         return res.status(200).json(response(baseResponse.SUCCESS, records));
       }
