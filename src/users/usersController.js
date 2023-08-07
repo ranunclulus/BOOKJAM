@@ -179,7 +179,7 @@ const usersController = {
     }
   },
 
-  getRecord: async (req, res) => {
+  getRecordForUpdate: async (req, res) => {
     try {
       const userId = req.user.userId;
       const recordId = req.params.recordId;
