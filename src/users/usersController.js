@@ -178,6 +178,25 @@ const usersController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+
+  getRecord: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      const recordId = req.params.recordId;
+      const checkOwner = await usersProvider.checkOwner(userId, recordId);
+      if (!checkOwner) {
+        return res.status(404).json(response(baseResponse.IS_NOT_RECORD_OWNER));
+      }
+      const result = await usersProvider.getRecord(recordId);
+      if (result.error){
+        return res.status(500).json(response(baseResponse.SERVER_ERROR));
+      }
+      return res.status(200).json(response(baseResponse.SUCCESS, result));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
 };
 
 export default usersController;

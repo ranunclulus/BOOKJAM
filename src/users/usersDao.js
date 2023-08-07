@@ -191,6 +191,29 @@ const usersDao = {
       await connection.rollback();
     }
   },
+
+  checkOwner: async (userId, recordId, connection) => {
+    const sql = `SELECT count(*) as c FROM records WHERE author = ${userId} and record_id = ${recordId}`;
+    try {
+        const [[records]] = await connection.query(sql);
+        return records.c;
+    } catch (error) {
+      console.log(error);
+      return {error: true};
+    }
+  },
+
+  getRecord: async (recordId, connection) => {
+    const sql = `SELECT * FROM records WHERE record_id = ${recordId}`;
+    const images_sql = `SELECT id, image_url FROM record_images WHERE record_id = ${recordId}`;
+    try {
+      const [records] = await connection.query(sql);
+      const [images] = await connection.query(images_sql);
+      return {records: records, images: images};
+    } catch (error) {
+      return {error: true};
+    }
+  },
 };
 
 export default usersDao;

@@ -56,6 +56,24 @@ const usersProvider = {
     }
     return false;
   },
+
+  checkOwner: async (userId, recordId) => {
+    const connection = await pool.getConnection();
+
+    const author  = await usersDao.checkOwner(userId, recordId, connection);
+
+    return author === userId;
+  },
+
+  getRecord: async (recordId) => {
+    try{
+      const connection = await pool.getConnection();
+      const result = await usersDao.getRecord(recordId, connection);
+      return result;
+    }catch (error) {
+      return {error: true};
+    }
+  },
 };
 
 export default usersProvider;

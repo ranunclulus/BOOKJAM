@@ -12,5 +12,6 @@ usersRouter.patch("/:userId(\\d+)/password", usersController.patchPassword);
 usersRouter.patch("/:userId(\\d+)/profile", middlewares.s3Upload.single("images"), usersController.patchProfile);
 usersRouter.patch("/:userId(\\d+)/disabled", usersController.patchDisabled);
 usersRouter.delete("/:userId(\\d+)/following/:targetUserId(\\d+)", usersController.deleteFollowing);
+usersRouter.get("/record/:recordId", usersController.getRecord);
 
 export default usersRouter;
