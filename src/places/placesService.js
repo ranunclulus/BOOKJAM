@@ -111,8 +111,7 @@ const placesService = {
         const [hours] = await placesDao.selectPlaceHoursByDay(place.placeId, curr.getDay(), connection);
         const open = checkOpen(hours, curr);
 
-        const imagesRaw = await placesDao.selectPlaceImages(place.placeId, connection);
-        const images = imagesRaw.map(({ image_url }) => image_url);
+        const images = await placesDao.selectPlaceImages(place.placeId, connection);
 
         const { road, jibun, ...rest } = place;
 
