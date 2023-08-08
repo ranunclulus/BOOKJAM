@@ -4,13 +4,15 @@ import middlewares from "../../config/middlewares";
 
 const usersRouter = express.Router();
 
-usersRouter.get("/:userId(\\d+)/records", usersController.getRecordsByUserId);
-usersRouter.get("/:userId(\\d+)", usersController.getMyPage);
+usersRouter.get("/records", usersController.getRecordsByUserId);
+usersRouter.get("/outline", usersController.getMyPage);
 usersRouter.post("/:userId(\\d+)/following", usersController.postFollowing);
-usersRouter.patch("/:userId(\\d+)/username", usersController.patchUsername);
-usersRouter.patch("/:userId(\\d+)/password", usersController.patchPassword);
-usersRouter.patch("/:userId(\\d+)/profile", middlewares.s3Upload.single("images"), usersController.patchProfile);
-usersRouter.patch("/:userId(\\d+)/disabled", usersController.patchDisabled);
+usersRouter.patch("/username", usersController.patchUsername);
+usersRouter.patch("/password", usersController.patchPassword);
+usersRouter.patch("/profile", middlewares.s3Upload.single("images"), usersController.patchProfile);
+usersRouter.patch("/disabled", usersController.patchDisabled);
 usersRouter.delete("/:userId(\\d+)/following/:targetUserId(\\d+)", usersController.deleteFollowing);
+usersRouter.get("/activities", usersController.getMyActivities);
+usersRouter.get("/reviews", usersController.getMyReviews)
 
 export default usersRouter;

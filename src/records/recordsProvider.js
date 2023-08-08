@@ -1,10 +1,11 @@
 import pool from "../../config/database";
 import recordsDao from "./recordsDao";
+import logger from "../../config/logger";
 const recordsProvider = {
-  getRecordsByUserId: async (userId, friendId) => {
+  getRecordsByUserId: async (userId, friendId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await recordsDao.selectRecordsByFriendId(connection, userId, friendId);
+      const recordsResult = await recordsDao.selectRecordsByFriendId(connection, userId, friendId, last);
       connection.release();
       if (recordsResult.error) return { error: true };
 
@@ -13,15 +14,15 @@ const recordsProvider = {
       }
       return recordsResult;
     } catch (err) {
-      console.error(err);
+      logger.error(error.message);
       return { error: true };
     }
   },
 
-  getRecordsAll: async (userId) => {
+  getRecordsAll: async (userId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await recordsDao.selectRecordsAll(connection, userId);
+      const recordsResult = await recordsDao.selectRecordsAll(connection, userId, last);
       connection.release();
       if (recordsResult.error) return { error: true };
       for (let i = 0; i < recordsResult.length; i++) {
@@ -29,7 +30,7 @@ const recordsProvider = {
       }
       return recordsResult;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -42,7 +43,7 @@ const recordsProvider = {
       if (chk.error) return { error: true };
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -58,7 +59,7 @@ const recordsProvider = {
       }
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -71,7 +72,7 @@ const recordsProvider = {
       if (result.error) return { error: true };
       return result;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -84,7 +85,7 @@ const recordsProvider = {
       if (result.error) return { error: true };
       return result;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -98,7 +99,7 @@ const recordsProvider = {
       if (result === 0) return { owner : false};
       return { owner : true };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
