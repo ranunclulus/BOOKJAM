@@ -76,7 +76,7 @@ const placesController = {
   getPlaces: async (req, res) => {
     try {
       const {
-        query: { category, sortBy = "rating", lat, lon, last },
+        query: { category, sortBy = "distance", lat, lon, last },
       } = req;
 
       if (!CATEGORY_KEYWORD.includes(category)) {

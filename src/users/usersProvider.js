@@ -1,11 +1,12 @@
 import pool from "../../config/database";
 import usersDao from "./usersDao";
+import logger from "../../config/logger";
 
 const usersProvider = {
-  getRecordsByUserId: async (userId) => {
+  getRecordsByUserId: async (userId, last, category) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId);
+      const recordsResult = await usersDao.selectRecordsByUserId(connection, userId, last, category);
       connection.release();
       if (recordsResult.error) return { error: true };
 
@@ -26,7 +27,7 @@ const usersProvider = {
       if (chk.error) return 0;
       return chk;
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return 0;
     }
   },
@@ -35,14 +36,11 @@ const usersProvider = {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
       const userOutline = await usersDao.selectMypageUserOutline(connection, userId);
-      const activities = await usersDao.selectMypageActivities(connection, userId);
-      const records = await usersDao.selectMypageRecords(connection, userId);
-      const reviews = await usersDao.selectMypageReviews(connection, userId);
       connection.release();
-      if (userOutline.error || activities.error || records.error || reviews.error) return { error: true };
-      return { userOutline: userOutline, activities: activities, records: records, reviews: reviews };
+      if (userOutline.error) return { error: true };
+      return { userOutline: userOutline };
     } catch (error) {
-      console.error(error);
+      logger.error(error.message);
       return { error: true };
     }
   },
@@ -74,6 +72,33 @@ const usersProvider = {
       return {error: true};
     }
   },
+  
+  getMyReviews: async (userId, last) => {
+    try {
+      const connection = await pool.getConnection(async (conn) => conn);
+      const userReviews = await usersDao.selectMyReviews(connection, userId, last);
+      connection.release();
+      if (userReviews.error) return { error: true };
+      return { userReviews: userReviews };
+    } catch (error) {
+      logger.error(error.message);
+      return { error: true };
+    }
+  },
+
+  getMyActivities: async (userId, last) => {
+    try {
+      const connection = await pool.getConnection(async (conn) => conn);
+      const userActivities = await usersDao.selectMyActivities(connection, userId, last);
+      connection.release();
+      if (userActivities.error) return { error: true };
+      return { userActivities: userActivities };
+    } catch (error) {
+      logger.error(error.message);
+      return { error: true };
+    }
+  },
+
 };
 
 export default usersProvider;
