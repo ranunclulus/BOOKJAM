@@ -64,7 +64,7 @@ const placesService = {
     let reviews = await placesDao.selectPlaceReviews(placeId, last, connection);
     reviews = await Promise.all(
       reviews.map(async (review) => {
-        const images = (await placesDao.selectReviewImages(review.reviewId, connection)).map((obj) => obj.image_url);
+        const images = await placesDao.selectReviewImages(review.reviewId, connection);
         const { userId, username, profileImage, ...rest } = review;
 
         return {
