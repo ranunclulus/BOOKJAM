@@ -12,6 +12,7 @@ usersRouter.patch("/password", usersController.patchPassword);
 usersRouter.patch("/profile", middlewares.s3Upload.single("images"), usersController.patchProfile);
 usersRouter.patch("/disabled", usersController.patchDisabled);
 usersRouter.delete("/:userId(\\d+)/following/:targetUserId(\\d+)", usersController.deleteFollowing);
+usersRouter.get("/record/:recordId", usersController.getRecordForUpdate);
 usersRouter.get("/activities", usersController.getMyActivities);
 usersRouter.get("/reviews", usersController.getMyReviews)
 
