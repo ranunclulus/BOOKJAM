@@ -4,7 +4,7 @@ import authProvider from "./authProvider";
 import bcrypt from "bcrypt";
 import authService from "./authService";
 import logger from "../../config/logger";
-import jwt from "jsonwebtoken";
+import jwt from "../../config/jwt";
 
 const validateEmail = (email) => {
   const emailRegex = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$");
@@ -19,14 +19,6 @@ const validatePassword = (password) => {
 
   return passwordRegex.test(password);
 };
-
-const signTokenAsync = (payload, options) =>
-  new Promise((resolve, reject) => {
-    jwt.sign(payload, process.env.JWT_SECRET, options, (error, payload) => {
-      if (error) reject(error);
-      resolve(payload);
-    });
-  });
 
 const authController = {
   checkEmailTaken: async (req, res) => {
@@ -94,8 +86,8 @@ const authController = {
         return res.status(400).json(response(baseResponse.SIGNIN_INACTIVE_ACCOUNT));
       }
 
-      const accessToken = await signTokenAsync({ userId: user.userId }, { expiresIn: "1h", issuer: "bookjam" });
-      const refreshToken = await signTokenAsync({}, { expiresIn: "14d", issuer: "bookjam" });
+      const accessToken = await jwt.signTokenAsync({ userId: user.userId }, { expiresIn: "1h", issuer: "bookjam" });
+      const refreshToken = await jwt.signTokenAsync({ userId: user.userId }, { expiresIn: "14d", issuer: "bookjam" });
 
       const saveResult = authProvider.saveRefresh(user.userId, refreshToken);
 
@@ -106,6 +98,33 @@ const authController = {
       const result = { accessToken, refreshToken };
 
       return res.status(200).json(response(baseResponse.SUCCESS, result));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
+
+  refresh: async (req, res) => {
+    try {
+      const token = jwt.extractTokenFromHeader(req);
+
+      if (!token) {
+        return res.status(400).json(response(baseResponse.TOKEN_EMPTY));
+      }
+
+      const isTokenValid = await authProvider.validateRefreshToken(token);
+
+      if (!isTokenValid.result) {
+        if (isTokenValid.name === "TokenExipredError") return res.status(401).json(response(baseResponse.REFRESH_TOKEN_EXPIRED));
+        return res.status(401).json(response(baseResponse.JWT_VERIFICATION_FAILED));
+      }
+
+      const accessToken = await jwt.signTokenAsync({ userId: payload.userId }, { expiresIn: "1h", issuer: "bookjam" });
+      const refreshToken = await jwt.signTokenAsync({ userId: payload.userId }, { expiresIn: "14d", issuer: "bookjam" });
+
+      await authProvider.saveRefresh(payload.userId, refreshToken);
+
+      return res.status(200).json(response(baseResponse.SUCCESS, { accessToken, refreshToken }));
     } catch (error) {
       logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
