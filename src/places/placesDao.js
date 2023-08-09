@@ -42,7 +42,7 @@ const placesDao = {
   },
   selectPlaceImages: async (placeId, connection) => {
     const sql = `
-      select image_url
+      select id, image_url
       from place_reviews r
       join place_review_images i on r.review_id = i.review_id
       where r.place_id = ${placeId}
