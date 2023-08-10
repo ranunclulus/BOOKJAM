@@ -9,13 +9,12 @@ const usersDao = {
     const lastq = ` WHERE cr.created_at < (select created_at FROM records WHERE record_id = ${last})`;
     const order = ` ORDER BY cr.created_at DESC LIMIT 5`;
     try {
-      if (last){
+      if (last) {
         const [records] = await connection.query(sql + lastq + order);
         return records;
-      }
-      else{
+      } else {
         const [records] = await connection.query(sql + order);
-        return records
+        return records;
       }
     } catch (error) {
       logger.error(error.message);
@@ -101,15 +100,14 @@ const usersDao = {
     const sql = `SELECT ar.activity_id, a.title, a.total_rating, a.review_count, a.image_url FROM activity_reservations as ar
         JOIN activities as a 
         ON ar.activity_id = a.activity_id
-        WHERE ar.user_id = ${userId}`
-    const lastq = ` AND ar.created_at < (select created_at from activitity_reservations where activity_id = ${last})`
+        WHERE ar.user_id = ${userId}`;
+    const lastq = ` AND ar.created_at < (select created_at from activitity_reservations where activity_id = ${last})`;
     const order = ` order by a.created_at desc LIMIT 5`;
     try {
-      if (last){
+      if (last) {
         const [result] = await connection.query(sql + lastq + order);
         return result;
-      }
-      else{
+      } else {
         const [result] = await connection.query(sql + order);
         return result;
       }
@@ -129,11 +127,10 @@ const usersDao = {
     const lastq = ` Where r.created_at < (select created_at From place_reviews where activity_id = ${last})`;
     const order = ` ORDER BY r.created_at desc limit 5`;
     try {
-      if (last){
+      if (last) {
         const [result] = await connection.query(sql + lastq + order);
         return result;
-      }
-      else{
+      } else {
         const [result] = await connection.query(sql + order);
         return result;
       }
@@ -196,11 +193,11 @@ const usersDao = {
   checkOwner: async (userId, recordId, connection) => {
     const sql = `SELECT count(*) as c FROM records WHERE author = ${userId} and record_id = ${recordId}`;
     try {
-        const [[records]] = await connection.query(sql);
-        return records.c;
+      const [[records]] = await connection.query(sql);
+      return records.c;
     } catch (error) {
       console.log(error);
-      return {error: true};
+      return { error: true };
     }
   },
 
@@ -210,10 +207,34 @@ const usersDao = {
     try {
       const [records] = await connection.query(sql);
       const [images] = await connection.query(images_sql);
-      return {records: records, images: images};
+      return { records: records, images: images };
     } catch (error) {
-      return {error: true};
+      return { error: true };
     }
+  },
+
+  findUsersByKeyword: async (regexp, userId, connection) => {
+    const sql = `
+      select user_id userId, profile_image profileImage, username, email
+      from users
+      where disabled_at is null and user_id != ${userId} and (username regexp '${regexp}' or substring_index(email, '@', 1) regexp '${regexp}')
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+
+  checkFollow: async (follower, followee, connection) => {
+    const sql = `
+      select id
+      from follow
+      where follower = ${follower} and followee = ${followee}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
   },
 };
 

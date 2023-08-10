@@ -180,7 +180,7 @@ const usersController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
-  
+
   getMyReviews: async (req, res) => {
     try {
       const userId = req.user.userId;
@@ -195,12 +195,12 @@ const usersController = {
       const records = await usersProvider.getMyReviews(userId, last);
       if (records.error) return res.status(500).json(response(baseResponse.SERVER_ERROR));
       return res.status(200).json(response(baseResponse.SUCCESS, records));
-    }catch (error) {
+    } catch (error) {
       logger.error(error.message);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
-      
+
   getRecordForUpdate: async (req, res) => {
     try {
       const userId = req.user.userId;
@@ -210,7 +210,7 @@ const usersController = {
         return res.status(404).json(response(baseResponse.IS_NOT_RECORD_OWNER));
       }
       const result = await usersProvider.getRecord(recordId);
-      if (result.error){
+      if (result.error) {
         return res.status(500).json(response(baseResponse.SERVER_ERROR));
       }
       return res.status(200).json(response(baseResponse.SUCCESS, result));
@@ -240,6 +240,25 @@ const usersController = {
     }
   },
 
+  searchUsers: async (req, res) => {
+    try {
+      const {
+        query: { keyword },
+        user: { userId },
+      } = req;
+
+      if (!keyword) {
+        return res.status(400).json(response(baseResponse.SEARCH_KEYWORD_EMPTY));
+      }
+
+      const searchResult = await usersService.searchUsers(keyword, userId);
+
+      return res.status(200).json(response(baseResponse.SUCCESS, searchResult));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
 };
 
 export default usersController;
