@@ -26,18 +26,18 @@ const recordsDao = {
 
     insertRecord: async (connection, recordData) => {
         const sql_record = `INSERT INTO records (author,  place_id, isbn, date, activities, emotions, contents, isNotPublic, comment_not_allowed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const check_book = `SELECT * FROM place_books WHERE isbn = ?`
         const sql_bookToPlace = `INSERT INTO place_books (place_id, isbn) VALUES (?, ?)`;
         try {
             await connection.beginTransaction();
             const [record_results] = await connection.query(sql_record, recordData);
-            const [book_results] = await connection.query(sql_bookToPlace, [recordData[1], recordData[2]])
-            console.log(record_results);
-            console.log(book_results);
+            const [check] = await connection.query(check_book, recordData[2])
+            if (!check)
+                await connection.query(sql_bookToPlace, [recordData[1], recordData[2]])
             await connection.commit();
             return record_results;
         } catch (error) {
             await connection.rollback();
-            console.log(error);
             logger.error(error.message);
             return {error: true};
         }
