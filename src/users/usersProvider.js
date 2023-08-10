@@ -104,8 +104,6 @@ const usersProvider = {
 
     const [result] = await usersDao.checkFollow(follower, followee, connection);
 
-    console.log(result);
-
     return result ? true : false;
   },
 };
