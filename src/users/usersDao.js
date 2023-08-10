@@ -213,11 +213,22 @@ const usersDao = {
     }
   },
 
-  findUsersByKeyword: async (regexp, userId, connection) => {
+  findUsersByKeyword: async (regexp, userId, last, connection) => {
+    console.log(last);
     const sql = `
       select user_id userId, profile_image profileImage, username, email
       from users
-      where disabled_at is null and user_id != ${userId} and (username regexp '${regexp}' or substring_index(email, '@', 1) regexp '${regexp}')
+      where
+        disabled_at is null
+        and user_id != ${userId} 
+        and (
+          username regexp '${regexp}' 
+          or substring_index(email, '@', 1) regexp '${regexp}'
+          or name regexp '${regexp}'
+        )
+        ${last ? `and user_id < ${last}` : ""}
+      order by user_id desc
+      limit 10
     `;
 
     const [queryResult] = await connection.query(sql);

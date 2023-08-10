@@ -76,12 +76,12 @@ const usersService = {
     return result;
   },
 
-  searchUsers: async (keyword, userId) => {
+  searchUsers: async (keyword, userId, last) => {
     const connection = await pool.getConnection();
 
     const keywordRegexp = getRegExp(keyword).toString().slice(1, -2);
 
-    let result = await usersDao.findUsersByKeyword(keywordRegexp, userId, connection);
+    let result = await usersDao.findUsersByKeyword(keywordRegexp, userId, last, connection);
 
     result = Promise.all(
       result.map(async (user) => {

@@ -243,7 +243,7 @@ const usersController = {
   searchUsers: async (req, res) => {
     try {
       const {
-        query: { keyword },
+        query: { keyword, last },
         user: { userId },
       } = req;
 
@@ -251,7 +251,7 @@ const usersController = {
         return res.status(400).json(response(baseResponse.SEARCH_KEYWORD_EMPTY));
       }
 
-      const searchResult = await usersService.searchUsers(keyword, userId);
+      const searchResult = await usersService.searchUsers(keyword, userId, last);
 
       return res.status(200).json(response(baseResponse.SUCCESS, searchResult));
     } catch (error) {
