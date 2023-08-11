@@ -8,6 +8,7 @@ import reviewsRouter from "../src/reviews/reviewsRouter";
 import authRouter from "../src/auth/authRouter";
 import usersRouter from "../src/users/usersRouter";
 import activitiesRouter from "../src/activities/activitiesRouter";
+import booksRouter from "../src/books/booksRouter";
 import middlewares from "./middlewares";
 
 const app = express();
@@ -25,5 +26,6 @@ app.use("/reviews", middlewares.authCheck, reviewsRouter);
 app.use("/users", middlewares.authCheck, usersRouter);
 app.use("/auth", authRouter);
 app.use("/activities", middlewares.authCheck, activitiesRouter);
+app.use("/books", middlewares.authCheck, booksRouter);
 
 export default app;
