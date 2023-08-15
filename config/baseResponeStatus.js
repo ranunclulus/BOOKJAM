@@ -35,7 +35,8 @@ const baseResponse = {
   SIGNIN_FAILED: { status: "FAIL", code: 2032, message: "사용자가 없거나 비밀번호가 일치하지 않습니다." },
   SIGNIN_INACTIVE_ACCOUNT: { status: "FAIL", code: 2034, message: "활성화된 계정이 아닙니다." },
   REFRESH_TOKEN_SAVE_ERROR: { status: "FAIL", code: 2035, message: "Refresh 토큰 저장에 실패했습니다." },
-  ACTIVITY_NOT_FOUND: { status: "FAIL", code: 2036, message: "활동이 존재하지 않습니다." },
+  ACTIVITY_NOT_FOUND: { status: "FAIL", code: 2036, message: "존재하지 않는 활동입니다." },
+  ACTIVITY_NOT_LIKED: { status: "FAIL", code: 2037, message: "좋아요가 되어있지 않습니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },

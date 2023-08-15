@@ -11,6 +11,7 @@ const activitiesDao = {
     const [queryActivity] = await connection.query(sql, activityId);
     return queryActivity;
   },
+
   insertLike: async (activityId, userId, connection) => {
     const sql = `
       insert into activity_likes(activity_id, liker)
@@ -30,6 +31,39 @@ const activitiesDao = {
       logger.error(error);
       return { error: true };
     }
+  },
+
+  deleteLike: async (activityId, userId, connection) => {
+    const sql = `
+      delete from activity_likes
+      where activity_id = ${activityId} and liker = ${userId}
+    `;
+
+    try {
+      await connection.beginTransaction();
+
+      await connection.query(sql);
+
+      await connection.commit();
+
+      return { error: false };
+    } catch (error) {
+      await connection.rollback();
+      logger.error(error);
+      return { error: true };
+    }
+  },
+
+  findLikeByActivityIdAndUserId: async (activityId, userId, connection) => {
+    const sql = `
+      select id
+      from activity_likes
+      where activity_id = ${activityId} and liker = ${userId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
   },
 };
 

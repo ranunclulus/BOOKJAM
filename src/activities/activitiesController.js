@@ -45,6 +45,32 @@ const activitiesController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+
+  deleteLike: async (req, res) => {
+    try {
+      const {
+        params: { activityId },
+        user: { userId },
+      } = req;
+
+      const deleteResult = await activitiesService.deleteLike(activityId, userId);
+
+      if (deleteResult.error) {
+        if (deleteResult.message === "ActivityNotFound") {
+          return res.status(404).json(response(baseResponse.ACTIVITY_NOT_FOUND));
+        }
+
+        if (deleteResult.message === "ActivityNotLiked") {
+          return res.status(400).json(response(baseResponse.ACTIVITY_NOT_LIKED));
+        }
+      }
+
+      return res.status(202).json(response(baseResponse.SUCCESS, { liked: false }));
+    } catch (error) {
+      logger.error(error.message);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
 };
 
 export default activitiesController;
