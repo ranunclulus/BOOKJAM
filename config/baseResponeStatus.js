@@ -28,13 +28,14 @@ const baseResponse = {
   NOT_FOLLOWED: { status: "FAIL", code: 2017, message: "친구로 등록하지 않은 회원입니다." },
   IS_NOT_RECORD_OWNER: { status: "FAIL", code: 2018, message: "기록을 쓴 유저가 아닙니다." },
   REFRESH_TOKEN_EXPIRED: { status: "FAIL", code: 2019, message: "Refresh Token이 만료되었습니다. 재로그인 하십시오." },
-  NO_BOOK_TITLE: { status: "FAIL", code: 2020, message: "책 제목이 없습니다."},
-  NO_BOOK_ISBN: { status: "FAIL", code: 2020, message: "책 ISBN이 없습니다."},
+  NO_BOOK_TITLE: { status: "FAIL", code: 2020, message: "책 제목이 없습니다." },
+  NO_BOOK_ISBN: { status: "FAIL", code: 2020, message: "책 ISBN이 없습니다." },
   TOKEN_EMPTY: { status: "FAIL", code: 2030, message: "토큰이 존재하지 않습니다." },
   TOKEN_VERIFICATION_FAILURE: { status: "FAIL", code: 2031, message: "토큰이 일치하지 않습니다." },
   SIGNIN_FAILED: { status: "FAIL", code: 2032, message: "사용자가 없거나 비밀번호가 일치하지 않습니다." },
   SIGNIN_INACTIVE_ACCOUNT: { status: "FAIL", code: 2034, message: "활성화된 계정이 아닙니다." },
   REFRESH_TOKEN_SAVE_ERROR: { status: "FAIL", code: 2035, message: "Refresh 토큰 저장에 실패했습니다." },
+  ACTIVITY_NOT_FOUND: { status: "FAIL", code: 2036, message: "활동이 존재하지 않습니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },
