@@ -26,6 +26,8 @@ const activitiesProvider = {
 
     const [likeResult] = await activitiesDao.findLikeByActivityIdAndUserId(activityId, userId, connection);
 
+    connection.release();
+
     return likeResult;
   },
 };
