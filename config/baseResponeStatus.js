@@ -37,6 +37,7 @@ const baseResponse = {
   REFRESH_TOKEN_SAVE_ERROR: { status: "FAIL", code: 2035, message: "Refresh 토큰 저장에 실패했습니다." },
   ACTIVITY_NOT_FOUND: { status: "FAIL", code: 2036, message: "존재하지 않는 활동입니다." },
   ACTIVITY_NOT_LIKED: { status: "FAIL", code: 2037, message: "좋아요가 되어있지 않습니다." },
+  ACTIVITY_ALREADY_LIKED: { status: "FAIL", code: 2038, message: "이미 좋아요한 활동입니다." },
 
   //ERROR
   SERVER_ERROR: { status: "ERROR", code: 3000, message: "서버 에러" },

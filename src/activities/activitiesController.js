@@ -28,15 +28,16 @@ const activitiesController = {
         user: { userId },
       } = req;
 
-      const activityExists = await activitiesProvider.retrieveActivityByActivityId(activityId);
-      if (activityExists.error) {
-        return res.status(404).json(response(baseResponse.ACTIVITY_NOT_FOUND));
-      }
-
       const likeResult = await activitiesService.postLike(activityId, userId);
 
       if (likeResult.error) {
-        return res.status(500).json(response(baseResponse.SERVER_ERROR));
+        if (likeResult.message === "ActivityNotFound") {
+          return res.status(404).json(response(baseResponse.ACTIVITY_NOT_FOUND));
+        }
+
+        if (likeResult.message === "ActivityAlreadyLiked") {
+          return res.status(400).json(response(baseResponse.ACTIVITY_ALREADY_LIKED));
+        }
       }
 
       return res.status(201).json(response(baseResponse.SUCCESS, { liked: true }));

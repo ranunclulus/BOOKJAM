@@ -6,11 +6,21 @@ const activitiesService = {
   postLike: async (activityId, userId) => {
     const connection = await pool.getConnection();
 
-    const result = await activitiesDao.insertLike(activityId, userId, connection);
+    const activityExists = await activitiesProvider.retrieveActivityByActivityId(activityId);
+
+    if (activityExists.error) {
+      return { error: true, message: "ActivityNotFound" };
+    }
+
+    if (await activitiesProvider.isActivityLiked(activityId, userId)) {
+      return { error: true, message: "ActivityAlreadyLiked" };
+    }
+
+    const likeResult = await activitiesDao.insertLike(activityId, userId, connection);
 
     connection.release();
 
-    return result;
+    return likeResult;
   },
 
   deleteLike: async (activityId, userId) => {
@@ -27,6 +37,8 @@ const activitiesService = {
     }
 
     const deleteResult = await activitiesDao.deleteLike(activityId, userId, connection);
+
+    connection.release();
 
     return deleteResult;
   },
