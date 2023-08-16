@@ -10,6 +10,8 @@ placesRouter.get("/:placeId(\\d+)/reviews", placesController.getReviews);
 placesRouter.get("/:placeId(\\d+)/activities", placesController.getActivities);
 placesRouter.get("/:placeId(\\d+)/news", placesController.getNews);
 placesRouter.get("/:placeId(\\d+)/books", placesController.getBooks);
+placesRouter.get("/:placeId(\\d+)", placesController.getPlaceDetails);
+
 placesRouter.post("/:placeId(\\d+)/reviews", placesController.postReview);
 
 export default placesRouter;

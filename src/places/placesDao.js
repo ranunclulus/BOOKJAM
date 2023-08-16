@@ -181,6 +181,37 @@ const placesDao = {
     const [queryResult] = await connection.query(sql);
     return queryResult;
   },
+  selectPlaceDetails: async (placeId, connection) => {
+    const sql = `
+      select 
+        p.place_id "placeId",
+        p.name,
+        p.category,
+        p.total_rating rating,
+        p.review_count "reviewCount",
+        p.website,
+        a.jibun,
+        a.road
+      from places p
+      join place_address a on p.place_id = a.place_id
+      where p.place_id = ${placeId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  checkPlaceBookmarked: async (placeId, userId, connection) => {
+    const sql = `
+      select id
+      from place_bookmarks
+      where place_id = ${placeId} and bookmarker = ${userId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
 };
 
 export default placesDao;

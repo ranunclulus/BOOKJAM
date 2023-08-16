@@ -32,8 +32,6 @@ const placesService = {
 
     let searchResult = await placesDao.selectPlacesByRegExp(koreanRegExp, sortBy, coord, last, connection);
 
-    const curr = getTime();
-
     searchResult = await Promise.all(
       searchResult.map(async (place) => {
         const { road, jibun, ...rest } = place;
@@ -186,6 +184,31 @@ const placesService = {
     } catch (error) {
       return { error: true };
     }
+  },
+
+  getPlaceDetails: async (placeId, userId) => {
+    const connection = await pool.getConnection();
+
+    const [isPlaceExists] = await placesDao.selectPlaceById(placeId, connection);
+
+    if (!isPlaceExists) {
+      return { error: { name: "PlaceNotFound" } };
+    }
+
+    const [details] = await placesDao.selectPlaceDetails(placeId, connection);
+
+    const { jibun, road, ...rest } = details;
+
+    let [bookmarked] = await placesDao.checkPlaceBookmarked(placeId, userId, connection);
+    bookmarked = bookmarked ? true : false;
+
+    const images = await placesDao.selectPlaceImages(placeId, connection);
+
+    const curr = getTime();
+    const [hours] = await placesDao.selectPlaceHoursByDay(placeId, curr.getDay(), connection);
+    const open = checkOpen(hours, curr);
+
+    return { error: null, result: { ...rest, address: { jibun, road }, images, open } };
   },
 };
 
