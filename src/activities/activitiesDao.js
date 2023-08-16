@@ -10,15 +10,12 @@ const activitiesDao = {
         return queryActivity;
     },
     checkUserLikedActivity: async (connection, activityId, userId) => {
-        console.log(activityId);
-        console.log(userId);
         const sql = `
             SELECT id
             FROM activity_likes
             WHERE activity_likes.activity_id = '${activityId}' AND activity_likes.liker = '${userId}'
             `;
         const [queryActivity] = await connection.query(sql);
-        console.log(queryActivity);
 
         return queryActivity;
     }
