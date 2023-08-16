@@ -1,7 +1,7 @@
 const placesDao = {
   selectPlacesByRegExp: async (regexp, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.category, a.road, a.jibun
+      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", total_rating rating
       from places p
       join place_address a on p.place_id = a.place_id
       where name regexp '${regexp}' or a.jibun regexp '${regexp}' or a.road regexp '${regexp}'
