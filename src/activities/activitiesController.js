@@ -1,4 +1,4 @@
-
+import jwt from "../../config/jwt";
 import activitiesProvider from "./activitiesProvider";
 import { response } from "../../config/response";
 import baseResponse from "../../config/baseResponeStatus";
@@ -14,6 +14,13 @@ const activitiesController = {
             if(activity.error) {
                 return res.status(400).json(response(baseResponse.ACTIVITY_ACTIVITYID_EMPTY));
             }
+
+            const accessToken = await jwt.extractTokenFromHeader(req);
+            const user = await jwt.verifyTokenAsync(accessToken);
+            const liked = await activitiesProvider.checkUserLikedActivity(activityId, user.userId);
+
+            activity.liked = liked.result;
+
             return res.status(200).json(response(baseResponse.SUCCESS, {activity:activity}));
         } catch (error){
             console.log(error);
