@@ -208,7 +208,7 @@ const placesService = {
     const [hours] = await placesDao.selectPlaceHoursByDay(placeId, curr.getDay(), connection);
     const open = checkOpen(hours, curr);
 
-    return { error: null, result: { ...rest, address: { jibun, road }, images, open } };
+    return { error: null, result: { ...rest, address: { jibun, road }, images, open, bookmarked } };
   },
 };
 
