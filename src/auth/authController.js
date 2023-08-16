@@ -119,10 +119,12 @@ const authController = {
         return res.status(401).json(response(baseResponse.JWT_VERIFICATION_FAILED));
       }
 
-      const accessToken = await jwt.signTokenAsync({ userId: payload.userId }, { expiresIn: "1h", issuer: "bookjam" });
-      const refreshToken = await jwt.signTokenAsync({ userId: payload.userId }, { expiresIn: "14d", issuer: "bookjam" });
+      const { userId } = await jwt.verifyTokenAsync(token);
 
-      await authProvider.saveRefresh(payload.userId, refreshToken);
+      const accessToken = await jwt.signTokenAsync({ userId }, { expiresIn: "1h", issuer: "bookjam" });
+      const refreshToken = await jwt.signTokenAsync({ userId }, { expiresIn: "14d", issuer: "bookjam" });
+
+      await authProvider.saveRefresh(userId, refreshToken);
 
       return res.status(200).json(response(baseResponse.SUCCESS, { accessToken, refreshToken }));
     } catch (error) {
