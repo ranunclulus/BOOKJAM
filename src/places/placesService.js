@@ -36,8 +36,11 @@ const placesService = {
       searchResult.map(async (place) => {
         const { road, jibun, ...rest } = place;
 
+        const images = await placesDao.selectPlaceImages(place.placeId, connection);
+
         return {
           ...rest,
+          images,
           address: {
             road,
             jibun,
