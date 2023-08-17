@@ -10,11 +10,14 @@ usersRouter.get("/record/:recordId", usersController.getRecordForUpdate);
 usersRouter.get("/activities", usersController.getMyActivities);
 usersRouter.get("/reviews", usersController.getMyReviews);
 usersRouter.get("/search", usersController.searchUsers);
-usersRouter.post("/:userId(\\d+)/following", usersController.postFollowing);
+
+usersRouter.post("/following", usersController.postFollowing);
+
 usersRouter.patch("/username", usersController.patchUsername);
 usersRouter.patch("/password", usersController.patchPassword);
 usersRouter.patch("/profile", middlewares.s3Upload.single("images"), usersController.patchProfile);
 usersRouter.patch("/disabled", usersController.patchDisabled);
-usersRouter.delete("/:userId(\\d+)/following/:targetUserId(\\d+)", usersController.deleteFollowing);
+
+usersRouter.delete("/following/:targetUserId(\\d+)", usersController.deleteFollowing);
 
 export default usersRouter;

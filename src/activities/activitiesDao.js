@@ -9,6 +9,16 @@ const activitiesDao = {
         const [queryActivity] = await connection.query(sql, activityId);
         return queryActivity;
     },
+    checkUserLikedActivity: async (connection, activityId, userId) => {
+        const sql = `
+            SELECT id
+            FROM activity_likes
+            WHERE activity_likes.activity_id = '${activityId}' AND activity_likes.liker = '${userId}'
+            `;
+        const [queryActivity] = await connection.query(sql);
+
+        return queryActivity;
+    }
 }
 
 export default activitiesDao;
