@@ -177,7 +177,7 @@ const placesDao = {
     return queryResult;
   },
   selectBooksByPlaceId: async (connection, placeId) => {
-    const sql = `SELECT * FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
+    const sql = `SELECT id, place_id "placeId", isbn, created_at "createAt" FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
     const [queryResult] = await connection.query(sql);
     return queryResult;
   },
