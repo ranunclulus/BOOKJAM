@@ -1,34 +1,35 @@
-import recordsDao from "./activitiesDao";
 import pool from "../../config/database";
 import activitiesDao from "./activitiesDao";
 
 const activitiesProvider = {
-  retrieveActivityByActivityId: async (activityId) => {
+  retrieveActivityByActivityId: async (activityId, userId) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const activityResult = await activitiesDao.selectActivityByActivityId(connection, activityId);
+      const [activityResult] = await activitiesDao.selectActivityByActivityId(connection, activityId);
 
-      if (Object.keys(activityResult).length === 0) {
+      if (!activityResult) {
         return { error: true };
       }
+      const liked = await activitiesProvider.checkUserLikedActivity(activityId, userId);
+
       connection.release();
       return {
         error: false,
-        result: activityResult,
+        result: { ...activityResult, liked },
       };
     } catch (err) {
       return { error: true };
     }
   },
 
-  isActivityLiked: async (activityId, userId) => {
+  checkUserLikedActivity: async (activityId, userId) => {
     const connection = await pool.getConnection();
 
     const [likeResult] = await activitiesDao.findLikeByActivityIdAndUserId(activityId, userId, connection);
 
     connection.release();
 
-    return likeResult;
+    return likeResult ? true : false;
   },
 };
 

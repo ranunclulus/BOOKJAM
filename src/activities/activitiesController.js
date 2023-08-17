@@ -8,13 +8,17 @@ const activitiesController = {
   getActivityByActivityId: async (req, res) => {
     try {
       const activityId = req.params.activityId;
+      const {
+        user: { userId },
+      } = req;
 
-      const activity = await activitiesProvider.retrieveActivityByActivityId(activityId);
+      const activity = await activitiesProvider.retrieveActivityByActivityId(activityId, userId);
 
       if (activity.error) {
-        return res.status(400).json(response(baseResponse.ACTIVITY_ACTIVITYID_EMPTY));
+        return res.status(400).json(response(baseResponse.ACTIVITY_NOT_FOUND));
       }
-      return res.status(200).json(response(baseResponse.SUCCESS, { activity: activity }));
+
+      return res.status(200).json(response(baseResponse.SUCCESS, activity.result));
     } catch (error) {
       console.log(error);
       return res.status(500).json(response(baseResponse.SERVER_ERROR));

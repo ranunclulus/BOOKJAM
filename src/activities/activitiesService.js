@@ -12,7 +12,7 @@ const activitiesService = {
       return { error: true, message: "ActivityNotFound" };
     }
 
-    if (await activitiesProvider.isActivityLiked(activityId, userId)) {
+    if (await activitiesProvider.checkUserLikedActivity(activityId, userId)) {
       return { error: true, message: "ActivityAlreadyLiked" };
     }
 
@@ -32,7 +32,7 @@ const activitiesService = {
       return { error: true, message: "ActivityNotFound" };
     }
 
-    if (!(await activitiesProvider.isActivityLiked(activityId, userId))) {
+    if (!(await activitiesProvider.checkUserLikedActivity(activityId, userId))) {
       return { error: true, message: "ActivityNotLiked" };
     }
 

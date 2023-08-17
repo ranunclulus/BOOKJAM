@@ -1,5 +1,7 @@
+import { getRegExp } from "korean-regexp";
 import pool from "../../config/database";
 import usersDao from "./usersDao";
+import usersProvider from "./usersProvider";
 
 const usersService = {
   patchUsername: async (userId, username) => {
@@ -67,9 +69,28 @@ const usersService = {
   deleteFollower: async (userId, targetUserId) => {
     const connection = await pool.getConnection();
 
-    const result = await usersDao.deleteFollow(userId, targetUserId, connection);
+    const result = await usersDao.deleteUserFollow(userId, targetUserId, connection);
 
     connection.release();
+
+    return result;
+  },
+
+  searchUsers: async (keyword, userId, last) => {
+    const connection = await pool.getConnection();
+
+    const keywordRegexp = getRegExp(keyword).toString().slice(1, -2);
+
+    let result = await usersDao.findUsersByKeyword(keywordRegexp, userId, last, connection);
+
+    result = Promise.all(
+      result.map(async (user) => {
+        const { userId: targetUserId } = user;
+        const following = await usersProvider.checkFollow(userId, targetUserId);
+
+        return { ...user, following };
+      })
+    );
 
     return result;
   },
