@@ -35,7 +35,7 @@ const authController = {
 
   recommendFriends: async (req, res) => {
     const friendsResult = await authProvider.recommendFriends();
-    return res.status(200).json(response(baseResponse.SUCCESS, { recommendFriends: friendsResult }));
+    return res.status(200).json(response(baseResponse.SUCCESS, friendsResult));
   },
 
   signUp: async (req, res) => {
