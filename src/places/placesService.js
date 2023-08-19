@@ -1,6 +1,7 @@
 import pool from "../../config/database";
 import placesDao from "./placesDao";
 import { getRegExp } from "korean-regexp";
+import axios from "axios";
 
 const getTime = () => {
   const curr = new Date();
@@ -183,7 +184,21 @@ const placesService = {
       if (Object.keys(bookResult).length == 0) {
         return { error: true, cause: "books" };
       }
-      return bookResult;
+      let results = [];
+      for (let book of bookResult) {
+          await axios({
+              method: 'GET',
+              url: `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${process.env.ALADIN_TTB}&Version=20131101&itemIdType=ISBN13&ItemId=${Number(book.isbn)}&output=JS`,
+              responseType: 'json',
+          }).then((res) => {
+              for (let book of res.data.item){
+                  const book_info = {title:book.title, author:book.author, cover:book.cover, description:book.description, isbn:book.isbn13}
+                  results.push(book_info);
+              }
+          });
+        }
+
+      return results;
     } catch (error) {
       return { error: true };
     }
