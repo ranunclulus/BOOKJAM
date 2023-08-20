@@ -186,17 +186,19 @@ const placesService = {
       }
       let results = [];
       for (let book of bookResult) {
-          await axios({
-              method: 'GET',
-              url: `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${process.env.ALADIN_TTB}&Version=20131101&itemIdType=ISBN13&ItemId=${Number(book.isbn)}&output=JS`,
-              responseType: 'json',
-          }).then((res) => {
-              for (let book of res.data.item){
-                  const book_info = {title:book.title, author:book.author, cover:book.cover, description:book.description, isbn:book.isbn13}
-                  results.push(book_info);
-              }
-          });
-        }
+        await axios({
+          method: "GET",
+          url: `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${process.env.ALADIN_TTB}&Version=20131101&itemIdType=ISBN13&ItemId=${Number(
+            book.isbn
+          )}&output=JS`,
+          responseType: "json",
+        }).then((res) => {
+          for (let book of res.data.item) {
+            const book_info = { title: book.title, author: book.author, cover: book.cover, description: book.description, isbn: book.isbn13 };
+            results.push(book_info);
+          }
+        });
+      }
 
       return results;
     } catch (error) {
@@ -225,6 +227,8 @@ const placesService = {
     const curr = getTime();
     const [hours] = await placesDao.selectPlaceHoursByDay(placeId, curr.getDay(), connection);
     const open = checkOpen(hours, curr);
+
+    connection.release();
 
     return { error: null, result: { ...rest, address: { jibun, road }, images, open, bookmarked } };
   },
