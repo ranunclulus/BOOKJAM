@@ -92,6 +92,8 @@ const usersService = {
       })
     );
 
+    connection.release();
+
     return result;
   },
 };

@@ -137,8 +137,7 @@ const placesService = {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
       const activitiesResult = await placesDao.selectActivitiesByPlaceId(connection, placeId);
-      console.log(activitiesResult);
-      console.log(typeof activitiesResult);
+
       if (Object.keys(activitiesResult).length == 0) {
         return { error: true };
       }
