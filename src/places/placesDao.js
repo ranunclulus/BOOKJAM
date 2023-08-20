@@ -88,7 +88,7 @@ const placesDao = {
   },
   selectReviewImages: async (reviewId, connection) => {
     const sql = `
-      select id, image_url
+      select id, image_url url
       from place_review_images
       where review_id = ${reviewId}
     `;
