@@ -52,6 +52,9 @@ const usersProvider = {
     if (alreadyFollowed) {
       return true;
     }
+
+    connection.release();
+
     return false;
   },
 
@@ -60,6 +63,8 @@ const usersProvider = {
 
     const author = await usersDao.checkOwner(userId, recordId, connection);
 
+    connection.release();
+
     return author === userId;
   },
 
@@ -67,6 +72,9 @@ const usersProvider = {
     try {
       const connection = await pool.getConnection();
       const result = await usersDao.getRecord(recordId, connection);
+
+      connection.release();
+
       return result;
     } catch (error) {
       return { error: true };
@@ -103,6 +111,8 @@ const usersProvider = {
     const connection = await pool.getConnection();
 
     const [result] = await usersDao.checkFollow(follower, followee, connection);
+
+    connection.release();
 
     return result ? true : false;
   },

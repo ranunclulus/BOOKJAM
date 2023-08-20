@@ -33,6 +33,8 @@ const authProvider = {
 
     const [user] = await authDao.selectUserByEmail(email, connection);
 
+    connection.release();
+
     return user;
   },
 
@@ -43,6 +45,8 @@ const authProvider = {
     if (!checkResult) {
       return false;
     }
+
+    connection.release();
 
     return checkResult;
   },
