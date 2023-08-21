@@ -1,6 +1,7 @@
 import pool from "../../config/database";
 import placesDao from "./placesDao";
 import { getRegExp } from "korean-regexp";
+import axios from "axios";
 
 const getTime = () => {
   const curr = new Date();
@@ -32,14 +33,15 @@ const placesService = {
 
     let searchResult = await placesDao.selectPlacesByRegExp(koreanRegExp, sortBy, coord, last, connection);
 
-    const curr = getTime();
-
     searchResult = await Promise.all(
       searchResult.map(async (place) => {
         const { road, jibun, ...rest } = place;
 
+        const images = await placesDao.selectPlaceImages(place.placeId, connection);
+
         return {
           ...rest,
+          images,
           address: {
             road,
             jibun,
@@ -135,8 +137,7 @@ const placesService = {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
       const activitiesResult = await placesDao.selectActivitiesByPlaceId(connection, placeId);
-      console.log(activitiesResult);
-      console.log(typeof activitiesResult);
+
       if (Object.keys(activitiesResult).length == 0) {
         return { error: true };
       }
@@ -182,10 +183,53 @@ const placesService = {
       if (Object.keys(bookResult).length == 0) {
         return { error: true, cause: "books" };
       }
-      return bookResult;
+      let results = [];
+      for (let book of bookResult) {
+        await axios({
+          method: "GET",
+          url: `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${process.env.ALADIN_TTB}&Version=20131101&itemIdType=ISBN13&ItemId=${Number(
+            book.isbn
+          )}&output=JS`,
+          responseType: "json",
+        }).then((res) => {
+          for (let book of res.data.item) {
+            const book_info = { title: book.title, author: book.author, cover: book.cover, description: book.description, publisher:book.publisher, isbn: book.isbn13 };
+            results.push(book_info);
+          }
+        });
+      }
+
+      return results;
     } catch (error) {
       return { error: true };
     }
+  },
+
+  getPlaceDetails: async (placeId, userId) => {
+    const connection = await pool.getConnection();
+
+    const [isPlaceExists] = await placesDao.selectPlaceById(placeId, connection);
+
+    if (!isPlaceExists) {
+      return { error: { name: "PlaceNotFound" } };
+    }
+
+    const [details] = await placesDao.selectPlaceDetails(placeId, connection);
+
+    const { jibun, road, ...rest } = details;
+
+    let [bookmarked] = await placesDao.checkPlaceBookmarked(placeId, userId, connection);
+    bookmarked = bookmarked ? true : false;
+
+    const images = await placesDao.selectPlaceImages(placeId, connection);
+
+    const curr = getTime();
+    const [hours] = await placesDao.selectPlaceHoursByDay(placeId, curr.getDay(), connection);
+    const open = checkOpen(hours, curr);
+
+    connection.release();
+
+    return { error: null, result: { ...rest, address: { jibun, road }, images, open, bookmarked } };
   },
 };
 

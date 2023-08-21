@@ -150,6 +150,28 @@ const placesController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+
+  getPlaceDetails: async (req, res) => {
+    try {
+      const {
+        params: { placeId },
+        user: { userId },
+      } = req;
+
+      const details = await placesService.getPlaceDetails(placeId, userId);
+
+      if (details.error) {
+        if (details.error.name == "PlaceNotFound") {
+          return res.status(404).json(response(baseResponse.PLACE_NOT_FOUND));
+        }
+      }
+
+      return res.status(200).json(response(baseResponse.SUCCESS, details.result));
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  },
 };
 
 export default placesController;

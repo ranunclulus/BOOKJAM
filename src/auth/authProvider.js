@@ -33,6 +33,8 @@ const authProvider = {
 
     const [user] = await authDao.selectUserByEmail(email, connection);
 
+    connection.release();
+
     return user;
   },
 
@@ -43,6 +45,8 @@ const authProvider = {
     if (!checkResult) {
       return false;
     }
+
+    connection.release();
 
     return checkResult;
   },
@@ -70,7 +74,9 @@ const authProvider = {
     try {
       const { userId } = await jwt.verifyTokenAsync(token);
 
-      const isTokenOnwer = (await authDao.selectRefreshToken(userId, connection)) === token;
+      const [{ refreshToken: tokenFromDB }] = await authDao.selectRefreshToken(userId, connection);
+
+      const isTokenOnwer = tokenFromDB === token;
       if (!isTokenOnwer) {
         logger.info(`Refresh Token: ${token} 사용자 ${userId}와(과) 불일치`);
         return { result: false, name: "NotOwnerError" };

@@ -10,6 +10,9 @@ const authService = {
       if (!newUserId) {
         return { error: false };
       }
+
+      connection.release();
+
       return newUserId;
     } catch (error) {
       logger.error(error.message);

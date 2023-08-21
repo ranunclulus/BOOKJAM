@@ -52,27 +52,35 @@ const usersProvider = {
     if (alreadyFollowed) {
       return true;
     }
+
+    connection.release();
+
     return false;
   },
 
   checkOwner: async (userId, recordId) => {
     const connection = await pool.getConnection();
 
-    const author  = await usersDao.checkOwner(userId, recordId, connection);
+    const author = await usersDao.checkOwner(userId, recordId, connection);
+
+    connection.release();
 
     return author === userId;
   },
 
   getRecord: async (recordId) => {
-    try{
+    try {
       const connection = await pool.getConnection();
       const result = await usersDao.getRecord(recordId, connection);
+
+      connection.release();
+
       return result;
-    }catch (error) {
-      return {error: true};
+    } catch (error) {
+      return { error: true };
     }
   },
-  
+
   getMyReviews: async (userId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
@@ -99,6 +107,15 @@ const usersProvider = {
     }
   },
 
+  checkFollow: async (follower, followee) => {
+    const connection = await pool.getConnection();
+
+    const [result] = await usersDao.checkFollow(follower, followee, connection);
+
+    connection.release();
+
+    return result ? true : false;
+  },
 };
 
 export default usersProvider;

@@ -1,7 +1,7 @@
 const placesDao = {
   selectPlacesByRegExp: async (regexp, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.category, a.road, a.jibun
+      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", total_rating rating
       from places p
       join place_address a on p.place_id = a.place_id
       where name regexp '${regexp}' or a.jibun regexp '${regexp}' or a.road regexp '${regexp}'
@@ -42,7 +42,7 @@ const placesDao = {
   },
   selectPlaceImages: async (placeId, connection) => {
     const sql = `
-      select id, image_url
+      select id, image_url url
       from place_reviews r
       join place_review_images i on r.review_id = i.review_id
       where r.place_id = ${placeId}
@@ -88,7 +88,7 @@ const placesDao = {
   },
   selectReviewImages: async (reviewId, connection) => {
     const sql = `
-      select id, image_url
+      select id, image_url url
       from place_review_images
       where review_id = ${reviewId}
     `;
@@ -152,7 +152,14 @@ const placesDao = {
   },
   selectActivitiesByPlaceId: async (connection, placeId) => {
     const sql = `
-        SELECT * 
+        SELECT activity_id "activityId", 
+        created_at "createdAt",
+        updated_at "updatedAt",
+        place_id "placeId",
+        title, info, capacity, headcount,
+        total_rating "totalRating",
+        review_count "reviewCount",
+        image_url "imageUrl"
         FROM activities
         WHERE place_id = ?;
         `;
@@ -177,8 +184,41 @@ const placesDao = {
     return queryResult;
   },
   selectBooksByPlaceId: async (connection, placeId) => {
+
     const sql = `SELECT id, place_id "placeId", isbn, created_at "createAt" FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
+
     const [queryResult] = await connection.query(sql);
+    return queryResult;
+  },
+  selectPlaceDetails: async (placeId, connection) => {
+    const sql = `
+      select 
+        p.place_id "placeId",
+        p.name,
+        p.category,
+        p.total_rating rating,
+        p.review_count "reviewCount",
+        p.website,
+        a.jibun,
+        a.road
+      from places p
+      join place_address a on p.place_id = a.place_id
+      where p.place_id = ${placeId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
+    return queryResult;
+  },
+  checkPlaceBookmarked: async (placeId, userId, connection) => {
+    const sql = `
+      select id
+      from place_bookmarks
+      where place_id = ${placeId} and bookmarker = ${userId}
+    `;
+
+    const [queryResult] = await connection.query(sql);
+
     return queryResult;
   },
 };
