@@ -152,7 +152,14 @@ const placesDao = {
   },
   selectActivitiesByPlaceId: async (connection, placeId) => {
     const sql = `
-        SELECT * 
+        SELECT activity_id "activityId", 
+        created_at "createdAt",
+        updated_at "updatedAt",
+        place_id "placeId",
+        title, info, capacity, headcount,
+        total_rating "totalRating",
+        review_count "reviewCount",
+        image_url "imageUrl"
         FROM activities
         WHERE place_id = ?;
         `;
