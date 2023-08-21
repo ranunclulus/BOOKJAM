@@ -193,7 +193,7 @@ const placesService = {
           responseType: "json",
         }).then((res) => {
           for (let book of res.data.item) {
-            const book_info = { title: book.title, author: book.author, cover: book.cover, description: book.description, isbn: book.isbn13 };
+            const book_info = { title: book.title, author: book.author, cover: book.cover, description: book.description, publisher:book.publisher, isbn: book.isbn13 };
             results.push(book_info);
           }
         });

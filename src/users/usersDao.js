@@ -79,14 +79,13 @@ const usersDao = {
   },
 
   selectMypageUserOutline: async (connection, userId) => {
-    const sql = `SELECT j1.user_id, j1.profile_image, j1.username, j1.review_count, count(re.record_id) as record_count
+    const sql = `SELECT j1.user_id, j1.profile_image, j1.username, count(j1.record_id) as record_count, Count(j1.) as activity_count, j1.review_count
         FROM (select u.user_id, u.profile_image, u.username, COUNT(pr.review_id) as review_count FROM (SELECT user_id, profile_image, username FROM users WHERE user_id = ${userId}) as u
         LEFT JOIN (SELECT author, review_id FROM activity_reviews WHERE author = ${userId} UNION SELECT author, review_id FROM place_reviews WHERE author = ${userId}) as pr
         ON u.user_id = pr.author
-        GROUP BY u.user_id) AS j1
         LEFT JOIN (SELECT author, record_id FROM records WHERE author = ${userId}) as re
         ON j1.user_id = re.author
-        group by j1.user_id`;
+        GROUP BY u.user_id) AS j1`
     try {
       const [result] = await connection.query(sql);
       return result;
