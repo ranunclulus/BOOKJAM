@@ -79,18 +79,20 @@ const usersDao = {
   },
 
   selectMypageUserOutline: async (connection, userId) => {
-    const sql = `SELECT j1.user_id, j1.profile_image, j1.username, j1.review_count, count(re.record_id) as record_count
-        FROM (select u.user_id, u.profile_image, u.username, COUNT(pr.review_id) as review_count FROM (SELECT user_id, profile_image, username FROM users WHERE user_id = ${userId}) as u
-        LEFT JOIN (SELECT author, review_id FROM activity_reviews WHERE author = ${userId} UNION SELECT author, review_id FROM place_reviews WHERE author = ${userId}) as pr
-        ON u.user_id = pr.author
-        GROUP BY u.user_id) AS j1
-        LEFT JOIN (SELECT author, record_id FROM records WHERE author = ${userId}) as re
-        ON j1.user_id = re.author
-        group by j1.user_id`;
+    const sql = `SELECT u1.user_id, u1.profile_image, u1.username
+        FROM (select u.user_id, u.profile_image, u.username FROM (SELECT user_id, profile_image, username FROM users WHERE user_id = ${userId}) as u) as u1`
+    const sql2 = `select count(pr.review_id) as review_count from (SELECT author, review_id FROM activity_reviews WHERE author = ${userId} UNION SELECT author, review_id FROM place_reviews WHERE author = ${userId}) as pr`
+    const sql3 = `select count(re.record_id) as record_count from (SELECT author, record_id FROM records WHERE author = ${userId}) as re`
+    const sql4 = `select count(ar.reserve_id) as reserve_count from (SELECT reserve_id, user_id FROM activity_reservations WHERE user_id = ${userId}) as ar`
     try {
-      const [result] = await connection.query(sql);
-      return result;
+      const [[result]] = await connection.query(sql);
+      const [[review]] = await connection.query(sql2);
+      const [[record]] = await connection.query(sql3);
+      const [[reserve]] = await connection.query(sql4);
+      console.log(result);
+      return {userId: result.user_id, profile: result.profile_image, username: result.username, review: review.review_count, reserve: reserve.reserve_count, record: record.record_count};
     } catch (error) {
+      console.log(error);
       logger.error(error.message);
       return { error: true };
     }
