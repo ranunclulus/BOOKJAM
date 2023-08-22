@@ -1,7 +1,7 @@
 const placesDao = {
   selectPlacesByRegExp: async (regexp, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", format(total_rating, 2) rating
+      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", round(total_rating, 2) rating
       from places p
       join place_address a on p.place_id = a.place_id
       where name regexp '${regexp}' or a.jibun regexp '${regexp}' or a.road regexp '${regexp}'
@@ -122,7 +122,7 @@ const placesDao = {
   },
   selectPlacesByCategory: async (category, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, format(p.total_rating, 2) rating, p.review_count "reviewCount", p.category, a.road, a.jibun
+      select p.place_id "placeId", p.name, round(p.total_rating, 2) rating, p.review_count "reviewCount", p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
       where p.category = ${category}
@@ -157,7 +157,7 @@ const placesDao = {
         updated_at "updatedAt",
         place_id "placeId",
         title, info, capacity, headcount,
-        format(total_rating, 2) "totalRating",
+        round(total_rating, 2) "totalRating",
         review_count "reviewCount",
         image_url "imageUrl"
         FROM activities
@@ -195,7 +195,7 @@ const placesDao = {
         p.place_id "placeId",
         p.name,
         p.category,
-        format(p.total_rating, 2) rating,
+        round(p.total_rating, 2) rating,
         p.review_count "reviewCount",
         p.website,
         a.jibun,
