@@ -106,7 +106,7 @@ const usersDao = {
   },
 
   selectMyActivities: async (connection, userId, last) => {
-    const sql = `SELECT ar.activity_id, a.title, format(a.total_rating, 2), a.review_count, a.image_url FROM activity_reservations as ar
+    const sql = `SELECT ar.activity_id, a.title, format(a.total_rating, 2) total_rating, a.review_count, a.image_url FROM activity_reservations as ar
         JOIN activities as a 
         ON ar.activity_id = a.activity_id
         WHERE ar.user_id = ${userId}`;
