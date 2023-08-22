@@ -14,7 +14,7 @@ const recordsProvider = {
       }
       return recordsResult;
     } catch (err) {
-      logger.error(error.message);
+      logger.error(err.message);
       return { error: true };
     }
   },

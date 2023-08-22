@@ -8,7 +8,8 @@ const recordsDao = {
         WHERE cr.isNotPublic = 0 `
         const lastq = ` AND cr.created_at < (select created_at FROM records WHERE record_id = ${last})`;
         const order = ` GROUP BY cr.record_id
-        ORDER BY cr.created_at DESC`;
+        ORDER BY cr.created_at DESC
+        LIMIT 10`;
         try {
             if (last){
                 const [records] = await connection.query(sql + lastq + order);
@@ -52,9 +53,10 @@ const recordsDao = {
         LEFT JOIN (SELECT record_id FROM record_likes WHERE liker = ${userId}) AS likes
         ON cr.place_id = places.place_id AND cr.record_id = likes.record_id AND cr.author = friends.user_id
         WHERE cr.isNotPublic = 0 `;
-        const lastq = ` AND cr.created_at < (select created_at FROM records WHERE record_id = ${lastId})`;
+        const lastq = ` AND cr.created_at < (select created_at FROM records WHERE record_id = ${last})`;
         const order = `GROUP BY cr.record_id
-        ORDER BY cr.created_at DESC`;
+        ORDER BY cr.created_at DESC
+        LIMIT 10`;
         try {
             if (last){
                 const [records] = await connection.query(sql + lastq + order);
