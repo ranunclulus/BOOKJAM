@@ -34,7 +34,7 @@ const recordsController = {
         return res.status(404).json(response(baseResponse.USER_NOT_FOUND));
       }
       const friendId = req.query.friendId;
-      const last = req.query.lastId;
+      const last = req.query.last;
       if (friendId) {
         const chkUser = await recordsProvider.checkUser(friendId);
         if (!chkUser) {
