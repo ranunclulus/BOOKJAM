@@ -221,6 +221,18 @@ const placesDao = {
 
     return queryResult;
   },
+  insertBookmark: async (placeId, userId, connection) => {
+    const sql =  `INSERT INTO place_bookmarks (place_id, bookmarker) VALUES (${placeId}, ${userId})`;
+    try {
+      await connection.beginTransaction();
+      const [result] = await connection.query(sql);
+      await connection.commit();
+      return result;
+    } catch (error) {
+      await connection.rollback();
+      return {error: true}
+    }
+  },
 };
 
 export default placesDao;

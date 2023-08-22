@@ -231,6 +231,20 @@ const placesService = {
 
     return { error: null, result: { ...rest, address: { jibun, road }, images, open, bookmarked } };
   },
+
+  postBookmark: async (placeId, userId) => {
+    try {
+      const connection = await pool.getConnection();
+      const [isPlaceExists] = await placesDao.selectPlaceById(placeId, connection);
+      if (!isPlaceExists) {
+        return { error: { name: "PlaceNotFound" } };
+      }
+      const result = await placesDao.insertBookmark(placeId, userId, connection);
+      return result;
+    } catch (error) {
+      return {error: true};
+    }
+  },
 };
 
 export default placesService;
