@@ -1,7 +1,7 @@
 const placesDao = {
   selectPlacesByRegExp: async (regexp, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", total_rating rating
+      select p.place_id "placeId", p.name, p.category, a.road, a.jibun, p.review_count "reviewCount", format(total_rating, 2) rating
       from places p
       join place_address a on p.place_id = a.place_id
       where name regexp '${regexp}' or a.jibun regexp '${regexp}' or a.road regexp '${regexp}'
@@ -122,7 +122,7 @@ const placesDao = {
   },
   selectPlacesByCategory: async (category, sortBy, coord, last, connection) => {
     let sql = `
-      select p.place_id "placeId", p.name, p.total_rating rating, p.review_count "reviewCount", p.category, a.road, a.jibun
+      select p.place_id "placeId", p.name, format(p.total_rating, 2) rating, p.review_count "reviewCount", p.category, a.road, a.jibun
       from places p
       join place_address a on p.place_id = a.place_id
       where p.category = ${category}
@@ -157,7 +157,7 @@ const placesDao = {
         updated_at "updatedAt",
         place_id "placeId",
         title, info, capacity, headcount,
-        total_rating "totalRating",
+        format(total_rating, 2) "totalRating",
         review_count "reviewCount",
         image_url "imageUrl"
         FROM activities
@@ -184,7 +184,6 @@ const placesDao = {
     return queryResult;
   },
   selectBooksByPlaceId: async (connection, placeId) => {
-
     const sql = `SELECT id, place_id "placeId", isbn, created_at "createAt" FROM place_books WHERE place_id = ${placeId} ORDER BY created_at DESC LIMIT 5;`;
 
     const [queryResult] = await connection.query(sql);
@@ -196,7 +195,7 @@ const placesDao = {
         p.place_id "placeId",
         p.name,
         p.category,
-        p.total_rating rating,
+        format(p.total_rating, 2) rating,
         p.review_count "reviewCount",
         p.website,
         a.jibun,
@@ -222,7 +221,7 @@ const placesDao = {
     return queryResult;
   },
   insertBookmark: async (placeId, userId, connection) => {
-    const sql =  `INSERT INTO place_bookmarks (place_id, bookmarker) VALUES (${placeId}, ${userId})`;
+    const sql = `INSERT INTO place_bookmarks (place_id, bookmarker) VALUES (${placeId}, ${userId})`;
     try {
       await connection.beginTransaction();
       const [result] = await connection.query(sql);
@@ -230,7 +229,7 @@ const placesDao = {
       return result;
     } catch (error) {
       await connection.rollback();
-      return {error: true}
+      return { error: true };
     }
   },
 };

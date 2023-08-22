@@ -3,7 +3,7 @@ import logger from "../../config/logger";
 const activitiesDao = {
   selectActivityByActivityId: async (connection, activityId) => {
     const sql = `
-            SELECT activity_id "activityId", title, info, capacity, headcount, total_rating rating, review_count "reviewCount", image_url imageUrl
+            SELECT activity_id "activityId", title, info, capacity, headcount, format(total_rating, 2) rating, review_count "reviewCount", image_url imageUrl
             FROM activities
             WHERE activities.activity_id = ?
             `;

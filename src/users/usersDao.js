@@ -80,17 +80,24 @@ const usersDao = {
 
   selectMypageUserOutline: async (connection, userId) => {
     const sql = `SELECT u1.user_id, u1.profile_image, u1.username
-        FROM (select u.user_id, u.profile_image, u.username FROM (SELECT user_id, profile_image, username FROM users WHERE user_id = ${userId}) as u) as u1`
-    const sql2 = `select count(pr.review_id) as review_count from (SELECT author, review_id FROM activity_reviews WHERE author = ${userId} UNION SELECT author, review_id FROM place_reviews WHERE author = ${userId}) as pr`
-    const sql3 = `select count(re.record_id) as record_count from (SELECT author, record_id FROM records WHERE author = ${userId}) as re`
-    const sql4 = `select count(ar.reserve_id) as reserve_count from (SELECT reserve_id, user_id FROM activity_reservations WHERE user_id = ${userId}) as ar`
+        FROM (select u.user_id, u.profile_image, u.username FROM (SELECT user_id, profile_image, username FROM users WHERE user_id = ${userId}) as u) as u1`;
+    const sql2 = `select count(pr.review_id) as review_count from (SELECT author, review_id FROM activity_reviews WHERE author = ${userId} UNION SELECT author, review_id FROM place_reviews WHERE author = ${userId}) as pr`;
+    const sql3 = `select count(re.record_id) as record_count from (SELECT author, record_id FROM records WHERE author = ${userId}) as re`;
+    const sql4 = `select count(ar.reserve_id) as reserve_count from (SELECT reserve_id, user_id FROM activity_reservations WHERE user_id = ${userId}) as ar`;
     try {
       const [[result]] = await connection.query(sql);
       const [[review]] = await connection.query(sql2);
       const [[record]] = await connection.query(sql3);
       const [[reserve]] = await connection.query(sql4);
       console.log(result);
-      return {userId: result.user_id, profile: result.profile_image, username: result.username, review: review.review_count, reserve: reserve.reserve_count, record: record.record_count};
+      return {
+        userId: result.user_id,
+        profile: result.profile_image,
+        username: result.username,
+        review: review.review_count,
+        reserve: reserve.reserve_count,
+        record: record.record_count,
+      };
     } catch (error) {
       console.log(error);
       logger.error(error.message);
@@ -99,7 +106,7 @@ const usersDao = {
   },
 
   selectMyActivities: async (connection, userId, last) => {
-    const sql = `SELECT ar.activity_id, a.title, a.total_rating, a.review_count, a.image_url FROM activity_reservations as ar
+    const sql = `SELECT ar.activity_id, a.title, format(a.total_rating, 2), a.review_count, a.image_url FROM activity_reservations as ar
         JOIN activities as a 
         ON ar.activity_id = a.activity_id
         WHERE ar.user_id = ${userId}`;
