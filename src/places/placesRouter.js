@@ -13,5 +13,6 @@ placesRouter.get("/:placeId(\\d+)/books", placesController.getBooks);
 placesRouter.get("/:placeId(\\d+)", placesController.getPlaceDetails);
 
 placesRouter.post("/:placeId(\\d+)/reviews", placesController.postReview);
+placesRouter.post("/:placeId(\\d+)/bookmarks", placesController.postBookmark);
 
 export default placesRouter;

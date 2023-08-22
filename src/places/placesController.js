@@ -172,6 +172,26 @@ const placesController = {
       return res.status(500).json(response(baseResponse.SERVER_ERROR));
     }
   },
+
+  postBookmark: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      const placeId = req.params.placeId;
+      if (!placeId) return res.status(404).json(response(baseResponse.PLACE_ID_NOT_FOUND));
+      const result = await placesService.postBookmark(placeId, userId);
+      if (result.error) {
+        if (result.error.name == "PlaceNotFound") {
+          return res.status(404).json(response(baseResponse.PLACE_NOT_FOUND));
+        }
+        return res.status(400).json(response(baseResponse.CANNOT_BOOKMARK));
+      }
+      return res.status(200).json(response(baseResponse.SUCCESS, "Bookmark Success"));
+    } catch (error) {
+      console.log(error);
+      logger.error(error);
+      return res.status(500).json(response(baseResponse.SERVER_ERROR));
+    }
+  }
 };
 
 export default placesController;
