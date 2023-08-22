@@ -1,6 +1,7 @@
 import pool from "../../config/database";
 import recordsDao from "./recordsDao";
 import logger from "../../config/logger";
+import axios from "axios";
 const recordsProvider = {
   getRecordsByUserId: async (userId, friendId, last) => {
     try {
@@ -22,12 +23,39 @@ const recordsProvider = {
   getRecordsAll: async (userId, last) => {
     try {
       const connection = await pool.getConnection(async (conn) => conn);
-      const recordsResult = await recordsDao.selectRecordsAll(connection, userId, last);
+      let recordsResult = await recordsDao.selectRecordsAll(connection, userId, last);
       connection.release();
       if (recordsResult.error) return { error: true };
-      for (let i = 0; i < recordsResult.length; i++) {
-        if (recordsResult[i].images_url) recordsResult[i].images_url = recordsResult[i].images_url.split("|");
-      }
+
+      recordsResult = await Promise.all(
+        recordsResult.map(async (record) => {
+          let { images_url, isbn, ...rest } = record;
+
+          if (images_url) {
+            images_url = images_url.split("|");
+          }
+
+          let book = null;
+          if (isbn) {
+            const {
+              data: {
+                item: [{ title }],
+              },
+            } = await axios.get(
+              `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${process.env.ALADIN_TTB}&Version=20131101&itemIdType=ISBN13&ItemId=${record.isbn}&output=JS`
+            );
+
+            book = title;
+          }
+
+          return {
+            ...rest,
+            images_url,
+            book,
+          };
+        })
+      );
+
       return recordsResult;
     } catch (error) {
       logger.error(error.message);
@@ -96,8 +124,8 @@ const recordsProvider = {
       const result = await recordsDao.checkOwner(connection, userId, commentId);
       connection.release();
       if (result.error) return { error: true };
-      if (result === 0) return { owner : false};
-      return { owner : true };
+      if (result === 0) return { owner: false };
+      return { owner: true };
     } catch (error) {
       logger.error(error.message);
       return { error: true };
