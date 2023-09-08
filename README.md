@@ -10,10 +10,8 @@
 <img src="https://github.com/ranunclulus/BOOKJAM/assets/87214089/2ced0939-78b9-4b05-8a91-c6aedcaf680e"/>
 <img src="https://github.com/ranunclulus/BOOKJAM/assets/87214089/859b9d43-e0a0-405d-8142-30dccd6ecff5"/>
 <img src="https://github.com/ranunclulus/BOOKJAM/assets/87214089/d9154ed9-76cc-4066-9d82-2e8bd9b88ab6"/>
-![https://github.com/ranunclulus/BOOKJAM/assets/87214089/0c9f8a9d-7d62-4fe5-8a7b-e8db51328299](https://github.com/ranunclulus/BOOKJAM/assets/87214089/0c9f8a9d-7d62-4fe5-8a7b-e8db51328299)
-![https://github.com/ranunclulus/BOOKJAM/assets/87214089/2ced0939-78b9-4b05-8a91-c6aedcaf680e](https://github.com/ranunclulus/BOOKJAM/assets/87214089/2ced0939-78b9-4b05-8a91-c6aedcaf680e)
-![https://github.com/ranunclulus/BOOKJAM/assets/87214089/859b9d43-e0a0-405d-8142-30dccd6ecff5](https://github.com/ranunclulus/BOOKJAM/assets/87214089/859b9d43-e0a0-405d-8142-30dccd6ecff5)
-![https://github.com/ranunclulus/BOOKJAM/assets/87214089/d9154ed9-76cc-4066-9d82-2e8bd9b88ab6](https://github.com/ranunclulus/BOOKJAM/assets/87214089/d9154ed9-76cc-4066-9d82-2e8bd9b88ab6)
+![1](https://github.com/ranunclulus/BOOKJAM/assets/87214089/2bbeb77b-1612-41c3-9b50-9c69b4d054b7)
+
 
 
 # Members 😎
